@@ -1,2 +1,3 @@
-# maxmind
-MaxMind log parser that report IP geolocation analysis.
+# MaxMind
+
+MaxMind log parser that report IP geo-location analysis.
