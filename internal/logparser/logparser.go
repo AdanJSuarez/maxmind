@@ -10,7 +10,7 @@ import (
 // LogExample: 183.60.212.148 - - [26/Aug/2014:06:26:39 -0600] "GET /entry/15205 HTTP/1.1" 200 4865 "-" "Mozilla/5.0 (compatible; EasouSpider; +http://www.easou.com/search/spider.html)"
 // logsFormat = `\[$time_stamp\] \"$http_method $request_path $_\" $response_code - $_ $_ $_ - \"$ips\" \"$_\" \"$_\" \"$_\" \"$_\"`
 const (
-	logsFormat = `$ip $_ $_ \[$time_stamp\] \"$request_method $request_path $protocol\" $status_code $size \"$_\" \"$_ \($_ $_ http:$webPage\)\"`
+	logsFormat = `$ip $_ $_ \[$time_stamp\] \"$request_method $request_path $protocol\" $status_code $size \"$_\" \"$_ http$web_page\.html"`
 )
 
 type Log struct {
@@ -29,8 +29,12 @@ type LogParser struct {
 
 func New() *LogParser {
 	regexFormat := regexp.MustCompile(`\$([\w_]*)`).ReplaceAllString(logsFormat, `(?P<$1>.*)`)
+	regex, err := regexp.Compile(regexFormat)
+	if err != nil {
+		log.Println("error: ", err)
+	}
 	return &LogParser{
-		regex: regexp.MustCompile(regexFormat),
+		regex: regex,
 	}
 }
 
