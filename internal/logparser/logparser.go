@@ -10,7 +10,7 @@ import (
 // LogExample: 183.60.212.148 - - [26/Aug/2014:06:26:39 -0600] "GET /entry/15205 HTTP/1.1" 200 4865 "-" "Mozilla/5.0 (compatible; EasouSpider; +http://www.easou.com/search/spider.html)"
 // logsFormat = `\[$time_stamp\] \"$http_method $request_path $_\" $response_code - $_ $_ $_ - \"$ips\" \"$_\" \"$_\" \"$_\" \"$_\"`
 const (
-	logsFormat = `$ip $_ $_ \[$time_stamp\] \"$request_method $request_path $protocol\" $status_code $size \"$_\" \"$_\"`
+	logsFormat = `$ip $_ $_ \[$time_stamp\] \"$request_method $request_path $protocol\" $status_code $size \"$_\" \"$_ \($_ $_ http:$webPage\)\"`
 )
 
 type Log struct {
@@ -20,6 +20,7 @@ type Log struct {
 	RequestPath   string
 	StatusCode    int64
 	Size          int64
+	WebPage       string
 }
 
 type LogParser struct {
@@ -42,6 +43,7 @@ func (lp *LogParser) Parse(line string) Log {
 		RequestPath:   matches[6],
 		StatusCode:    lp.parseStringToInt64(matches[8]),
 		Size:          lp.parseStringToInt64(matches[9]),
+		WebPage:       matches[14],
 	}
 }
 

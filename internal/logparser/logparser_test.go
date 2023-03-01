@@ -32,6 +32,7 @@ func (ts *TSLogParser) TestLogLine() {
 	ts.Equal("/entry/15205", actual.RequestPath)
 	ts.Equal(int64(200), actual.StatusCode)
 	ts.Equal(int64(4865), actual.Size)
+	ts.Equal(actual.WebPage, "http://www.easou.com/search/spider.html")
 }
 
 func (ts *TSLogParser) TestParseValidInteger() {
