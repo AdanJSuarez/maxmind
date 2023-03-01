@@ -3,7 +3,6 @@ package logreader
 import (
 	"bufio"
 	"fmt"
-	"log"
 
 	"github.com/spf13/afero"
 )
@@ -22,14 +21,15 @@ func New(linesCh chan string) *LogReader {
 	}
 }
 
-func (fr *LogReader) ReadLinesFromFile(path string) {
+func (fr *LogReader) ReadLinesFromFile(path string) error {
 	file, err := fr.fileSys.Open(path)
 	if err != nil {
-		log.Panicf("error opening the file: %s: %v", path, err)
+		return fmt.Errorf("error opening the file: %s: %v", path, err)
 	}
 	defer file.Close()
 
 	fr.sendLinesToLinesCh(file)
+	return nil
 }
 
 func (fr *LogReader) sendLinesToLinesCh(file afero.File) {
