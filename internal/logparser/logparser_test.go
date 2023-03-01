@@ -16,7 +16,7 @@ var (
 
 type TSLogParser struct{ suite.Suite }
 
-func TestRunTSAccount(t *testing.T) {
+func TestRunTSLogParser(t *testing.T) {
 	suite.Run(t, new(TSLogParser))
 }
 

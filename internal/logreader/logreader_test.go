@@ -17,7 +17,7 @@ var readerTest *LogReader
 
 type TSLogReader struct{ suite.Suite }
 
-func TestRunTSAccount(t *testing.T) {
+func TestRunTSLogReader(t *testing.T) {
 	suite.Run(t, new(TSLogReader))
 }
 
