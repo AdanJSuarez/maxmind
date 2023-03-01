@@ -17,3 +17,6 @@ bin/
 
 # Assets for testing
 asset/
+
+# Mocks
+mock_*
