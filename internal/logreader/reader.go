@@ -4,21 +4,26 @@ import (
 	"bufio"
 	"fmt"
 	"log"
-	"os"
+
+	"github.com/spf13/afero"
 )
 
 type LogReader struct {
 	linesCh chan string
+	fileSys afero.Fs
 }
 
 func New(linesCh chan string) *LogReader {
+	afero := afero.NewOsFs()
+
 	return &LogReader{
 		linesCh: linesCh,
+		fileSys: afero,
 	}
 }
 
 func (fr *LogReader) ReadLinesFromFile(path string) {
-	file, err := os.Open(path)
+	file, err := fr.fileSys.Open(path)
 	if err != nil {
 		log.Panicf("error opening the file: %s: %v", path, err)
 	}
@@ -27,7 +32,7 @@ func (fr *LogReader) ReadLinesFromFile(path string) {
 	fr.sendLinesToLinesCh(file)
 }
 
-func (fr *LogReader) sendLinesToLinesCh(file *os.File) {
+func (fr *LogReader) sendLinesToLinesCh(file afero.File) {
 	fileScanner := bufio.NewScanner(file)
 
 	fileScanner.Split(bufio.ScanLines)
