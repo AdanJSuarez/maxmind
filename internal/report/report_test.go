@@ -1,6 +1,7 @@
 package report
 
 import (
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/suite"
@@ -19,10 +20,10 @@ func TestRunTSReport(t *testing.T) {
 }
 
 func (ts *TSReport) BeforeTest(_, _ string) {
-	linesCh := make(chan string, 10)
+	var wg sync.WaitGroup
 	logParserMock = newMockLogParser(ts.T())
 	geoInfoMock = newMockGeoInfo(ts.T())
-	reportTest = New(logParserMock, geoInfoMock, linesCh)
+	reportTest = New(logParserMock, geoInfoMock, 10, &wg)
 }
 
 func (ts *TSReport) TestShouldExcludeTrue1() {
