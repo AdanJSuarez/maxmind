@@ -17,7 +17,7 @@ func TestRunTSSubdivision(t *testing.T) {
 }
 
 func (ts *TSSubdivision) BeforeTest(_, _ string) {
-	subdivisionTest = newSubdivision("/")
+	subdivisionTest = newSubdivision("Ontario", "/")
 }
 
 func (ts *TSSubdivision) TestSubdivisionInitialized() {
