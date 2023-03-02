@@ -1,12 +1,12 @@
 package report
 
 import (
+	"fmt"
 	"log"
 	"regexp"
 	"sync"
 
-	"github.com/AdanJSuarez/maxmind/internal/logparser"
-	"github.com/oschwald/geoip2-golang"
+	"github.com/AdanJSuarez/maxmind/internal/report/countries"
 )
 
 const (
@@ -26,7 +26,7 @@ type Report struct {
 	logParser logParser
 	geoInfo   geoInfo
 	regex     *regexp.Regexp
-	countries map[string]*country
+	countries *countries.Countries
 	linesCh   chan string
 }
 
@@ -37,7 +37,7 @@ func New(logParser logParser, geoInfo geoInfo, channelSize int64, wg *sync.WaitG
 		regex:     regexp.MustCompile(logPatter),
 		logParser: logParser,
 		geoInfo:   geoInfo,
-		countries: make(map[string]*country),
+		countries: countries.NewCountries(),
 		linesCh:   make(chan string, channelSize),
 	}
 }
@@ -56,27 +56,28 @@ func (r *Report) GetReport() {
 		}
 
 		if r.shouldExclude(lineLog.RequestPath) {
-			log.Printf("log excluded in report: %v", lineLog)
+			// log.Printf("log excluded in report: %v", lineLog)
 			continue
 		}
 		record := r.geoInfo.GetIPInfo(lineLog.IP)
 		// log.Println("Info ==> ", record)
-		r.addCountry(lineLog, record)
+		if len(record.Subdivisions) > 0 {
+			r.countries.AddToCountries(record.Country.Names["en"], record.Subdivisions[0].Names["en"], lineLog.RequestPath)
+		} else {
+			r.countries.AddToCountries(record.Country.Names["en"], "unknown", lineLog.RequestPath)
+		}
+
 	}
+	for idx, val := range r.countries.MostVisit(10) {
+		fmt.Printf("Number: %d: %s\n", idx+1, val.Name())
+	}
+
 }
 
 func (r *Report) shouldExclude(requestPath string) bool {
 	return r.regex.MatchString(requestPath)
 }
 
-func (r *Report) addCountry(lineLog logparser.Log, record *geoip2.City) {
-	name := record.City.Names["en"]
-	_, found := r.countries[name]
-	if !found {
-		r.countries[name] = newCountry(lineLog.RequestPath)
-		return
-	}
-	r.countries[name].add(lineLog.RequestPath)
+func (r *Report) extractSubdivisions(subdivision []interface{}) {
+	// TODO: Implement extractSubdivisions
 }
-
-// func (r *Report)

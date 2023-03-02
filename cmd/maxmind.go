@@ -10,7 +10,7 @@ import (
 	"github.com/AdanJSuarez/maxmind/internal/report"
 )
 
-const channelSize = 10
+const channelSize = 1000
 
 func main() {
 	var wg sync.WaitGroup
