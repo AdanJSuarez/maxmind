@@ -9,10 +9,10 @@ import (
 //go:generate mockery --inpackage --name=geoInfo
 
 type logParser interface {
-	Parse(line string) logparser.Log
+	Parse(line string) (logparser.Log, error)
 }
 
 type geoInfo interface {
-	OpenDB(path string) error
+	OpenDB() error
 	GetIPInfo(IPString string) *geoip2.City
 }
