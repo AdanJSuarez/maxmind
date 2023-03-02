@@ -17,7 +17,7 @@ func TestRunTSCountry(t *testing.T) {
 }
 
 func (ts *TSCountry) BeforeTest(_, _ string) {
-	countryTest = newCountry("Ontario", "/")
+	countryTest = newCountry("Canada", "Ontario", "/")
 }
 
 func (ts *TSCountry) TestCountryInitialized() {
