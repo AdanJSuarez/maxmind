@@ -2,7 +2,13 @@ package geoinfo
 
 import "github.com/oschwald/geoip2-golang"
 
-// GeoInfoModel represents the information about a specific IP
+const (
+	english = "en"
+	unknown = "unknown"
+)
+
+// GeoInfoModel represents the information about a specific IP.
+// This abstract the the API client we use.
 type GeoInfoModel struct {
 	IP           string
 	CountryName  string
@@ -32,7 +38,7 @@ func (gi *GeoInfoModel) geoInfoRecord(IPString string, record *geoip2.City) GeoI
 }
 
 func (gi *GeoInfoModel) countryName(record *geoip2.City) string {
-	countryName := record.Country.Names["en"]
+	countryName := record.Country.Names[english]
 	if gi.emptyName(countryName) {
 		countryName = unknown
 	}
@@ -59,7 +65,7 @@ func (gi *GeoInfoModel) extractSubdivisions(record *geoip2.City) []string {
 	subdivisions := []string{}
 
 	for _, val := range record.Subdivisions {
-		var subdivisionName = val.Names["en"]
+		var subdivisionName = val.Names[english]
 		if gi.emptyName(subdivisionName) {
 			subdivisionName = unknown
 		}

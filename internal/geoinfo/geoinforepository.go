@@ -9,7 +9,6 @@ import (
 
 const (
 	defaultDBPath = "./GeoLite2-City.mmdb"
-	unknown       = "unknown"
 )
 
 type GeoInfoRepository struct {
