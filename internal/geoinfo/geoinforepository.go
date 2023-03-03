@@ -7,7 +7,10 @@ import (
 	"github.com/oschwald/geoip2-golang"
 )
 
-const defaultDBPath = "./GeoLite2-City.mmdb"
+const (
+	defaultDBPath = "./GeoLite2-City.mmdb"
+	unknown       = "unknown"
+)
 
 type GeoInfoRepository struct {
 	dbPath string
@@ -40,13 +43,13 @@ func (gi *GeoInfoRepository) Close() error {
 }
 
 // GetIPInfo returns an instance of geoip2.City with the info of the IP passed if any.
-func (gi *GeoInfoRepository) GetIPInfo(IPString string) *geoip2.City {
+func (gi *GeoInfoRepository) GetIPInfo(IPString string) GeoInfoModel {
 	IP := net.ParseIP(IPString)
 	record, err := gi.db.City(IP)
-	if err != nil {
-		return nil
+	if err != nil || record == nil {
+		return newGeoInfoModel(IPString, nil)
 	}
-	return record
+	return newGeoInfoModel(IPString, record)
 }
 
 func (gi *GeoInfoRepository) setDBPath(dbPath string) {

@@ -27,7 +27,7 @@ func (ts *TSCountries) TestCountriesInitialization() {
 func (ts *TSCountries) TestAddToCountries1() {
 	countriesTest.AddToCountries("United States", "Montana", "/")
 
-	country := countriesTest.countries["United States"]
+	country := countriesTest.countries.Children()["United States"]
 	ts.Equal(int64(1), country.Counter())
 
 	subdivision := country.Children()["Montana"]
@@ -41,7 +41,7 @@ func (ts *TSCountries) TestAddToCountries2() {
 	countriesTest.AddToCountries("United States", "Montana", "/")
 	countriesTest.AddToCountries("United States", "Montana", "/")
 
-	country := countriesTest.countries["United States"]
+	country := countriesTest.countries.Children()["United States"]
 	ts.Equal(int64(2), country.Counter())
 
 	subdivision := country.Children()["Montana"]
@@ -55,7 +55,7 @@ func (ts *TSCountries) TestAddToCountries3() {
 	countriesTest.AddToCountries("United States", "Montana", "/")
 	countriesTest.AddToCountries("United States", "Montana", "/turbo")
 
-	country := countriesTest.countries["United States"]
+	country := countriesTest.countries.Children()["United States"]
 	ts.Equal(int64(2), country.Counter())
 
 	subdivision := country.Children()["Montana"]
@@ -72,7 +72,7 @@ func (ts *TSCountries) TestAddToCountries4() {
 	countriesTest.AddToCountries("United States", "Alabama", "/")
 	countriesTest.AddToCountries("United States", "Montana", "/turbo")
 
-	country := countriesTest.countries["United States"]
+	country := countriesTest.countries.Children()["United States"]
 	ts.Equal(int64(2), country.Counter())
 
 	subdivision1 := country.Children()["Montana"]

@@ -47,7 +47,9 @@ func (ts *TSGeoInfoRepository) TestGetIPInfoError() {
 	geoIPDBReaderMock.On("City", mock.Anything).Return(nil, fmt.Errorf("fake error on record"))
 
 	record := geoInfoRepoTest.GetIPInfo("122.122.12.22")
-	ts.Empty(record)
+	ts.Equal("122.122.12.22", record.IP)
+	ts.Equal(unknown, record.CountryName)
+	ts.Equal(unknown, record.Subdivisions[0])
 }
 
 func (ts *TSGeoInfoRepository) TestSetDBPath() {

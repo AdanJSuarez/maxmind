@@ -4,7 +4,7 @@ import (
 	"log"
 	"sync"
 
-	geoinfo "github.com/AdanJSuarez/maxmind/internal/geoinforepository"
+	geoinfo "github.com/AdanJSuarez/maxmind/internal/geoinfo"
 	"github.com/AdanJSuarez/maxmind/internal/logparser"
 	"github.com/AdanJSuarez/maxmind/internal/logreader"
 	"github.com/AdanJSuarez/maxmind/internal/report"

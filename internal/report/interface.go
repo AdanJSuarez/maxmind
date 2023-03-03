@@ -1,8 +1,8 @@
 package report
 
 import (
+	geoinfo "github.com/AdanJSuarez/maxmind/internal/geoinfo"
 	"github.com/AdanJSuarez/maxmind/internal/logparser"
-	"github.com/oschwald/geoip2-golang"
 )
 
 //go:generate mockery --inpackage --name=logParser
@@ -14,5 +14,5 @@ type logParser interface {
 
 type geoInfo interface {
 	OpenDB() error
-	GetIPInfo(IPString string) *geoip2.City
+	GetIPInfo(IPString string) geoinfo.GeoInfoModel
 }
