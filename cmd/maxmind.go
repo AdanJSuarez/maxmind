@@ -15,7 +15,7 @@ const channelSize = 1000
 func main() {
 	var wg sync.WaitGroup
 
-	log.Println("Start")
+	log.Println("==> Start <==")
 	logParser, err := logparser.New()
 	if err != nil {
 		log.Panicf("error on log parser: %v", err)

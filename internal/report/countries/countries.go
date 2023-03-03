@@ -1,41 +1,27 @@
 package countries
 
+import "github.com/AdanJSuarez/maxmind/internal/node"
+
 type Countries struct {
-	countries map[string]*Country
+	countries map[string]*node.Node
 }
 
-func NewCountries() *Countries {
+func New() *Countries {
 	return &Countries{
-		countries: make(map[string]*Country),
+		countries: make(map[string]*node.Node),
 	}
 }
 
 func (c *Countries) AddToCountries(countryName, subdivisionName, webpageName string) {
 	_, found := c.countries[countryName]
 	if !found {
-		c.countries[countryName] = newCountry(countryName, subdivisionName, webpageName)
-		return
+		country := node.New(countryName)
+		c.countries[countryName] = country
 	}
-	c.countries[countryName].addToCountry(subdivisionName, webpageName)
+
+	c.countries[countryName].AddToNode(subdivisionName, webpageName)
 }
 
-func (c *Countries) Countries() map[string]*Country {
+func (c *Countries) Countries() map[string]*node.Node {
 	return c.countries
-}
-
-func (c *Countries) MostVisit(number int) []*Country {
-	result := make([]*Country, number)
-	for _, v := range c.countries {
-		for idx := range result {
-			if result[idx] == nil {
-				result[idx] = v
-				break
-			}
-			if result[idx].counter <= v.counter {
-				result[idx] = v
-				break
-			}
-		}
-	}
-	return result
 }
