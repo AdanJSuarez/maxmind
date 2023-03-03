@@ -32,7 +32,7 @@ func (gi *GeoInfoModel) geoInfoRecord(IPString string, record *geoip2.City) GeoI
 }
 
 func (gi *GeoInfoModel) countryName(record *geoip2.City) string {
-	countryName := record.Country.Names["es"]
+	countryName := record.Country.Names["en"]
 	if gi.emptyName(countryName) {
 		countryName = unknown
 	}
