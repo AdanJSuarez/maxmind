@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"sync"
 
@@ -10,18 +11,21 @@ import (
 	"github.com/AdanJSuarez/maxmind/internal/report"
 )
 
-const channelSize = 1000
+const (
+	channelSize = 1000
+	fileName    = "./asset/GeoLite2-City.mmdb"
+)
 
 func main() {
 	var wg sync.WaitGroup
 
-	log.Println("==> Start <==")
+	fmt.Println("==> Start <==")
 	logParser, err := logparser.New()
 	if err != nil {
 		log.Panicf("error on log parser: %v", err)
 	}
 
-	geoinfo := geoinfo.New("./asset/GeoLite2-City.mmdb")
+	geoinfo := geoinfo.New(fileName)
 	if err := geoinfo.OpenDB(); err != nil {
 		log.Panicf("error open db: %v", err)
 	}
@@ -31,11 +35,8 @@ func main() {
 
 	reader := logreader.New(report.LinesCh())
 
+	fmt.Printf("==> Reading records from file: %s\n", fileName)
 	go reader.ReadLinesFromFile("./asset/access.log")
-	// for line := range linesCh {
-	// 	log.Println(line)
-	// 	time.Sleep(3 * time.Second)
-	// }
 	wg.Add(1)
 	go report.GetReport()
 	wg.Wait()
