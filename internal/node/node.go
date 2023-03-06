@@ -1,10 +1,26 @@
 package node
 
+import "sort"
+
 type Node struct {
 	name     string
 	counter  int64
 	data     map[string]int64
 	children map[string]*Node
+}
+
+// TODO: Move Data to its own file
+type Data struct {
+	key   string
+	value int64
+}
+
+func (d *Data) Key() string {
+	return d.key
+}
+
+func (d *Data) Value() int64 {
+	return d.value
 }
 
 // New returns a initialized instance of Node
@@ -50,13 +66,33 @@ func (n *Node) AddToNode(parameters ...string) {
 	}
 }
 
-func (n *Node) MostData(excluded string) {
-	var max int64
-	for data, counter := range n.data {
-		if data != excluded && counter > max {
-			max = counter
+func (n *Node) SortedData(excluded string) []Data {
+	sorted := make([]Data, 0, len(n.data))
+	for key, val := range n.data {
+		if key == excluded {
+			continue
 		}
+		sorted = append(sorted, Data{key, val})
 	}
+
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return sorted[i].value > sorted[j].value
+	})
+
+	return sorted
+}
+
+func (n *Node) SortedChildrenByCounter() []Data {
+	sorted := make([]Data, 0, len(n.data))
+	for key, val := range n.children {
+		sorted = append(sorted, Data{key, val.counter})
+	}
+
+	sort.SliceStable(sorted, func(i, j int) bool {
+		return sorted[i].value > sorted[j].value
+	})
+
+	return sorted
 }
 
 // addToData adds data to node.data and increases its counter
@@ -85,3 +121,17 @@ func (n *Node) hasTwoOrMoreElement(parametersLen int) bool {
 func (n *Node) removeFirstElement(parameters []string) []string {
 	return parameters[1:]
 }
+
+// Function for node:
+// Read a node with todo, visited.
+// If node visited return
+// Else:
+// Add to visited.
+// Add children to todos.
+// Compute on that node.
+// Call function for todos.
+
+// Function for todo:
+// If todo is empty, return
+// If todo not empty:
+// Function for node[0] with removed from todo.
