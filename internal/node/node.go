@@ -97,6 +97,41 @@ func (n *Node) SortedChildrenByCounter() []Data {
 	return sorted
 }
 
+// FindNode makes a Breadth-First Search and return the first node with "name"
+func (n *Node) FindNode(name string) *Node {
+	todo := make(map[string]*Node)
+	visited := make(map[string]*Node)
+	return n.breadthFirstSearchNode(name, n, todo, visited)
+}
+
+func (n *Node) breadthFirstSearchNode(name string, node *Node, todo map[string]*Node, visited map[string]*Node) *Node {
+	if n.contain(node, visited) {
+		return nil
+	}
+	if node.name == name {
+		return node
+	}
+	for key, val := range node.children {
+		todo[key] = val
+	}
+	return n.breadthFirstSearchNodes(name, todo, visited)
+}
+
+func (n *Node) breadthFirstSearchNodes(name string, todo map[string]*Node, visited map[string]*Node) *Node {
+	if len(todo) == 0 {
+		return nil
+	}
+	var node *Node
+	var nodeName string
+	for key, val := range todo {
+		node = val
+		nodeName = key
+		break
+	}
+	delete(todo, nodeName)
+	return n.breadthFirstSearchNode(name, node, todo, visited)
+}
+
 // addToData adds data to node.data and increases its counter
 func (n *Node) addToData(data string) {
 	n.data[data]++
@@ -122,6 +157,11 @@ func (n *Node) hasTwoOrMoreElement(parametersLen int) bool {
 
 func (n *Node) removeFirstElement(parameters []string) []string {
 	return parameters[1:]
+}
+
+func (n *Node) contain(node *Node, nodes map[string]*Node) bool {
+	_, found := nodes[node.name]
+	return found
 }
 
 // Function for node:

@@ -23,7 +23,8 @@ func (ts *TSReport) BeforeTest(_, _ string) {
 	var wg sync.WaitGroup
 	logParserMock = newMockLogParser(ts.T())
 	geoInfoMock = newMockGeoInfo(ts.T())
-	reportTest = New(logParserMock, geoInfoMock, 10, &wg)
+	reportTest = New(geoInfoMock, 10, &wg)
+	reportTest.logParser = logParserMock
 }
 
 func (ts *TSReport) TestShouldExcludeTrue1() {
