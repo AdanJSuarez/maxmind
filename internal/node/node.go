@@ -66,6 +66,7 @@ func (n *Node) AddToNode(parameters ...string) {
 	}
 }
 
+// SortedData returns a sorted slice of the data.
 func (n *Node) SortedData(excluded string) []Data {
 	sorted := make([]Data, 0, len(n.data))
 	for key, val := range n.data {
@@ -82,6 +83,7 @@ func (n *Node) SortedData(excluded string) []Data {
 	return sorted
 }
 
+// SortedChildrenByCounter returns a sorted slice of Children by its counter
 func (n *Node) SortedChildrenByCounter() []Data {
 	sorted := make([]Data, 0, len(n.data))
 	for key, val := range n.children {

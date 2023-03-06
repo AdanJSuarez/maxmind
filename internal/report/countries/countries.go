@@ -6,6 +6,7 @@ import (
 
 const (
 	top          = 10
+	oneVisitor   = 1
 	unitedStates = "United States"
 )
 
@@ -41,7 +42,7 @@ func (c *Countries) TopAreas(areas *node.Node, exclude string) []Info {
 	var result []Info
 	for _, val := range areas.SortedChildrenByCounter() {
 		area, found := areas.Children()[val.Key()]
-		if !found {
+		if !found || val.Value() < oneVisitor {
 			continue
 		}
 		areaInfo := Info{

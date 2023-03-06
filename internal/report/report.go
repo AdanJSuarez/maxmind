@@ -10,16 +10,9 @@ import (
 )
 
 const (
-	cssOr         = `[a-f0-9]+/css/|`
-	imagesOr      = `[a-f0-9]+/images/|/images/|`
-	jsOr          = `[a-f0-9]+/js/|`
-	entryImagesOr = `/entry-images/|`
-	staticOr      = `/static/|`
-	robotstxtOr   = `/robots.txt/?$|`
-	faviconicoOr  = `/favicon.ico/?$|`
-	rssOr         = `\w\.rss/?$|`
-	atomOr        = `\w\.atom/?$`
-	logPatter     = cssOr + imagesOr + jsOr + entryImagesOr + staticOr + robotstxtOr + faviconicoOr + rssOr + atomOr
+	logPatter    = `[a-f0-9]+/css/|[a-f0-9]+/images/|/images/|[a-f0-9]+/js/|/entry-images/|/static/|/robots.txt/?$|/favicon.ico/?$|\w\.rss/?$|\w\.atom/?$`
+	excludedPage = "/"
+	unitedStates = "United States"
 )
 
 type Report struct {
@@ -57,13 +50,10 @@ func (r *Report) GetReport() {
 		}
 
 		if r.shouldExclude(lineLog.RequestPath) {
-			// log.Printf("log excluded in report: %v", lineLog)
 			continue
 		}
 		record := r.geoInfo.GetIPInfo(lineLog.IP)
-		// log.Println("Info ==> ", record)
 		r.countries.AddToCountries(record.CountryName, record.Subdivisions[0], lineLog.RequestPath)
-
 	}
 	r.printReport()
 }
@@ -73,13 +63,13 @@ func (r *Report) shouldExclude(requestPath string) bool {
 }
 
 func (r *Report) printReport() {
-	fmt.Println("Countries:")
-	for idx, val := range r.countries.TopAreas(r.countries.Countries(), "/") {
-		fmt.Printf("%d : %s - Visits: %d - Most visited page: %s\n", idx, val.Name, val.Visit, val.TopPage)
+	fmt.Println("==> Countries:")
+	for idx, val := range r.countries.TopAreas(r.countries.Countries(), excludedPage) {
+		fmt.Printf("%d : %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, val.Name, val.Visit, val.TopPage)
 	}
-	fmt.Println("United States:")
-	for _, val := range r.countries.TopAreas(r.countries.Countries().Children()["United States"], "/") {
-		fmt.Printf("State: %s - Visits: %d - Most visited page: %s\n", val.Name, val.Visit, val.TopPage)
+	fmt.Println("==> United States:")
+	for idx, val := range r.countries.TopAreas(r.countries.Countries().Children()[unitedStates], excludedPage) {
+		fmt.Printf("%d: %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, val.Name, val.Visit, val.TopPage)
 	}
-	log.Println("==> Finished <== ")
+	fmt.Println("==> Finished <== ")
 }
