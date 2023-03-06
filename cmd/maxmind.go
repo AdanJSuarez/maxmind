@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"sync"
 
+	"github.com/AdanJSuarez/maxmind/internal/configuration"
 	geoinfo "github.com/AdanJSuarez/maxmind/internal/geoinfo"
 	"github.com/AdanJSuarez/maxmind/internal/logparser"
 	"github.com/AdanJSuarez/maxmind/internal/logreader"
@@ -13,32 +13,32 @@ import (
 
 const (
 	channelSize = 1000
-	fileName    = "./asset/GeoLite2-City.mmdb"
 )
 
 func main() {
+	config := configuration.New()
 	var wg sync.WaitGroup
 
-	fmt.Println("==> Start <==")
 	logParser, err := logparser.New()
 	if err != nil {
-		log.Panicf("error on log parser: %v", err)
+		fmt.Printf("error on log parser: %v\n", err)
+		return
 	}
 
-	geoinfo := geoinfo.New(fileName)
-	if err := geoinfo.OpenDB(); err != nil {
-		log.Panicf("error open db: %v", err)
+	geoInfo := geoinfo.New(config.DBfile)
+	if err := geoInfo.OpenDB(); err != nil {
+		fmt.Printf("error open db: %v\n", err)
+		return
 	}
-	defer geoinfo.Close()
+	defer geoInfo.Close()
 
-	report := report.New(logParser, geoinfo, channelSize, &wg)
+	report := report.New(logParser, geoInfo, channelSize, &wg)
 
 	reader := logreader.New(report.LinesCh())
 
-	fmt.Printf("==> Reading records from file: %s\n", fileName)
-	go reader.ReadLinesFromFile("./asset/access.log")
+	fmt.Printf("==> Reading logs from file: %s\n", config.LogFile)
+	go reader.ReadLinesFromFile(config.LogFile)
 	wg.Add(1)
 	go report.GetReport()
 	wg.Wait()
-
 }
