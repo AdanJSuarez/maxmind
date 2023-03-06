@@ -37,13 +37,14 @@ func (fr *LogReader) ReadLinesFromFile(path string) error {
 	return nil
 }
 
+// sendLinesToLinesCh reads line by line and sends them to linesCh.
+// It close the channel to sync with the receiver when it finished.
 func (fr *LogReader) sendLinesToLinesCh(file afero.File) {
 	fileScanner := bufio.NewScanner(file)
 
 	fileScanner.Split(bufio.ScanLines)
 
 	for fileScanner.Scan() {
-		// fmt.Println("on scanner ==>", fileScanner.Text())
 		fr.linesCh <- fileScanner.Text()
 	}
 	close(fr.linesCh)

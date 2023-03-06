@@ -63,13 +63,21 @@ func (r *Report) shouldExclude(requestPath string) bool {
 }
 
 func (r *Report) printReport() {
+	r.printCountries()
+	r.printUSA()
+	fmt.Println("==> Finished <== ")
+}
+
+func (r *Report) printCountries() {
 	fmt.Println("==> Countries:")
 	for idx, val := range r.countries.TopAreas(r.countries.Countries(), excludedPage) {
 		fmt.Printf("%d : %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, val.Name, val.Visit, val.TopPage)
 	}
+}
+
+func (r *Report) printUSA() {
 	fmt.Println("==> United States:")
 	for idx, val := range r.countries.TopAreas(r.countries.Countries().Children()[unitedStates], excludedPage) {
 		fmt.Printf("%d: %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, val.Name, val.Visit, val.TopPage)
 	}
-	fmt.Println("==> Finished <== ")
 }
