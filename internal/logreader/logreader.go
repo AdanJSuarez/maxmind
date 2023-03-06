@@ -8,17 +8,23 @@ import (
 )
 
 type LogReader struct {
-	linesCh chan string
-	fileSys afero.Fs
+	linesCh  chan string
+	fileSys  afero.Fs
+	filePath string
 }
 
-func New(linesCh chan string) *LogReader {
+func New(filePath string, linesCh chan string) (*LogReader, error) {
+	logReader := &LogReader{}
 	afero := afero.NewOsFs()
+	logReader.fileSys = afero
+	logReader.linesCh = linesCh
+	logReader.filePath = filePath
 
-	return &LogReader{
-		linesCh: linesCh,
-		fileSys: afero,
+	if err := logReader.checkFile(); err != nil {
+		return nil, err
 	}
+
+	return logReader, nil
 }
 
 /*
@@ -26,26 +32,35 @@ ReadLinesFromFile returns nil and sends through the channel the lines read.
 It close the channel to sync with the receiver indicating the end of the file.
 It returns an error if cannot open the file from the path.
 */
-func (fr *LogReader) ReadLinesFromFile(path string) error {
-	file, err := fr.fileSys.Open(path)
+func (lr *LogReader) ReadLinesFromFile() error {
+	file, err := lr.fileSys.Open(lr.filePath)
 	if err != nil {
-		return fmt.Errorf("error opening the file: %s: %v", path, err)
+		return fmt.Errorf("error opening the file: %s: %v", lr.filePath, err)
 	}
 	defer file.Close()
 
-	fr.sendLinesToLinesCh(file)
+	lr.sendLinesToLinesCh(file)
 	return nil
 }
 
 // sendLinesToLinesCh reads line by line and sends them to linesCh.
 // It close the channel to sync with the receiver when it finished.
-func (fr *LogReader) sendLinesToLinesCh(file afero.File) {
+func (lr *LogReader) sendLinesToLinesCh(file afero.File) {
+	defer close(lr.linesCh)
+
 	fileScanner := bufio.NewScanner(file)
 
 	fileScanner.Split(bufio.ScanLines)
 
 	for fileScanner.Scan() {
-		fr.linesCh <- fileScanner.Text()
+		lr.linesCh <- fileScanner.Text()
 	}
-	close(fr.linesCh)
+}
+
+func (lr *LogReader) checkFile() error {
+	_, err := lr.fileSys.Stat(lr.filePath)
+	if err != nil {
+		return fmt.Errorf("error on file: %s: %v", lr.filePath, err)
+	}
+	return err
 }

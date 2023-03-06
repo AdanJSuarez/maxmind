@@ -13,7 +13,10 @@ const (
 	fakeLog      = "183.60.212.148 - - [26/Aug/2014:06:26:39 -0600]"
 )
 
-var readerTest *LogReader
+var (
+	readerTest  *LogReader
+	linesChTest chan string
+)
 
 type TSLogReader struct{ suite.Suite }
 
@@ -22,19 +25,20 @@ func TestRunTSLogReader(t *testing.T) {
 }
 
 func (ts *TSLogReader) BeforeTest(_, _ string) {
-	linesCh := make(chan string, 10)
-	readerTest = New(linesCh)
+	linesChTest = make(chan string, 10)
+	readerTest, _ := New(fileNameTest, linesChTest)
 	readerTest.fileSys = afero.NewMemMapFs()
 	afero.WriteFile(readerTest.fileSys, fileNameTest, []byte(fakeLog), 0644)
 }
 
 func (ts *TSLogReader) TestReadLinesFromFileForValidFile() {
-	err := readerTest.ReadLinesFromFile(fileNameTest)
+	err := readerTest.ReadLinesFromFile()
 	ts.NoError(err)
 }
 
 func (ts *TSLogReader) TestReadLinesFromFileForInvalidFile() {
-	err := readerTest.ReadLinesFromFile("logreader_test.go")
+	readerTest, err := New("logreader_test.go", linesChTest)
+	ts.Nil(readerTest)
 	ts.ErrorContains(err, "file does not exist")
 }
 
