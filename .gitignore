@@ -25,4 +25,4 @@ asset/
 mock_*
 
 # Test Coverage reports
-coverage/
+.coverage/
