@@ -31,13 +31,16 @@ func New(filePath string, linesCh chan string) (*LogReader, error) {
 	return logReader, nil
 }
 
+func (lr *LogReader) Close() error {
+	return lr.file.Close()
+}
+
 /*
 ReadLinesFromFile returns nil and sends the lines read through the channel.
 It close the channel to sync with the receiver indicating the end of the file.
 */
 func (lr *LogReader) ReadLinesFromFile(wg *sync.WaitGroup) {
 	defer wg.Done()
-	defer lr.file.Close()
 	fmt.Printf("==> Reading lines of file: %s\n", lr.filePath)
 
 	lr.sendLinesToLinesCh()

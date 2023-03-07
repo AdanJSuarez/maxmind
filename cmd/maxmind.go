@@ -21,6 +21,7 @@ func main() {
 		return
 	}
 	defer app.Close()
+
 	fmt.Println("==> Start <==")
 	app.Start()
 	fmt.Println("==> Finished <== ")

@@ -51,7 +51,12 @@ func (a *App) Start() {
 
 // Close closes the geoInfo database.
 func (a *App) Close() {
-	a.geoInfo.Close()
+	if err := a.geoInfo.Close(); err != nil {
+		fmt.Printf("error closing the db: %v\n", err)
+	}
+	if err := a.logReader.Close(); err != nil {
+		fmt.Printf("error closing the file: %v\n", err)
+	}
 }
 
 // initializeApp initializes all the dependencies. It returns an error otherwise.

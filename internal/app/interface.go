@@ -21,6 +21,7 @@ type geoInfo interface {
 }
 
 type logReader interface {
+	Close() error
 	ReadLinesFromFile(wg *sync.WaitGroup)
 }
 
