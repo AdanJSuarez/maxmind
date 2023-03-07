@@ -117,3 +117,154 @@ func (ts *TSNode) TestAddToNodeGrandChild() {
 	ts.Equal("Santa Ursula", grantChild["Santa Ursula"].Name())
 	ts.Equal(int64(1), grantChild["Santa Ursula"].Counter())
 }
+
+func (ts *TSNode) TestAddToNodeGrandChild2() {
+	nodeTest.AddToNode("Tenerife", "La Matanza", "/turbo")
+	nodeTest.AddToNode("Tenerife", "Santa Ursula", "/")
+	nodeTest.AddToNode("Tenerife", "La Victoria", "/")
+
+	nodeTest.AddToNode("Canada", "Ontario", "/turbo1")
+	nodeTest.AddToNode("Canada", "Alberta", "/t")
+	nodeTest.AddToNode("Canada", "Alberta", "/t")
+	nodeTest.AddToNode("Canada", "Alberta", "/trading")
+	nodeTest.AddToNode("Canada", "Alberta", "/t")
+	nodeTest.AddToNode("Canada", "Yukon", "/t")
+
+	pageCounter := nodeTest.Data()["/"]
+	ts.Equal(int64(2), pageCounter)
+
+	canada := nodeTest.Children()["Canada"]
+	ts.Equal(int64(4), canada.Data()["/t"])
+
+	alberta := canada.Children()["Alberta"]
+	ts.Equal(int64(4), alberta.Counter())
+	ts.Equal(int64(3), alberta.Data()["/t"])
+	ts.Equal(int64(0), alberta.Data()["/turbo1"])
+}
+
+func (ts *TSNode) TestSortedData() {
+	nodeTest.AddToNode("Tenerife", "Santa Ursula", "/")
+	nodeTest.AddToNode("Tenerife", "La Victoria", "/")
+	nodeTest.AddToNode("Tenerife", "La Matanza", "/")
+
+	actual := nodeTest.SortedData("")
+	expected := []Data{{name: "/", counter: 3}}
+	ts.Equal(expected, actual)
+}
+func (ts *TSNode) TestSortedData2() {
+	nodeTest.AddToNode("Tenerife", "La Matanza", "/turbo")
+	nodeTest.AddToNode("Tenerife", "Santa Ursula", "/")
+	nodeTest.AddToNode("Tenerife", "La Victoria", "/")
+
+	actual := nodeTest.SortedData("")
+	expected := []Data{
+		{name: "/", counter: 2},
+		{name: "/turbo", counter: 1},
+	}
+	ts.Equal(expected, actual)
+}
+func (ts *TSNode) TestSortedDataPageExcluded() {
+	nodeTest.AddToNode("Tenerife", "La Matanza", "/turbo")
+	nodeTest.AddToNode("Tenerife", "Santa Ursula", "/")
+	nodeTest.AddToNode("Tenerife", "La Victoria", "/")
+
+	actual := nodeTest.SortedData("/")
+	expected := []Data{
+		{name: "/turbo", counter: 1},
+	}
+	ts.Equal(expected, actual)
+}
+func (ts *TSNode) TestSortedDataEmptyData() {
+	actual := nodeTest.SortedData("/")
+	expected := []Data{}
+	ts.Equal(expected, actual)
+}
+
+func (ts *TSNode) TestSortedChildrenByCounter() {
+	node1 := &node{name: "La Matanza", counter: 1}
+	node2 := &node{name: "Santa Ursula", counter: 2}
+	node3 := &node{name: "La Victoria", counter: 3}
+
+	nodeTest := node{name: "countries", children: map[string]Node{}}
+	nodeTest.children[node1.name] = node1
+	nodeTest.children[node2.name] = node2
+	nodeTest.children[node3.name] = node3
+
+	actual := nodeTest.SortedChildren()
+	expected := []Node{node3, node2, node1}
+	ts.Equal(expected, actual)
+}
+
+func (ts *TSNode) TestSortedChildrenByCounterEmpty() {
+	nodeTest := node{name: "countries", children: map[string]Node{}}
+
+	actual := nodeTest.SortedChildren()
+	expected := []Node{}
+	ts.Equal(expected, actual)
+}
+
+func (ts *TSNode) TestRemoveFirstElement() {
+	names := []string{"a"}
+	actual := removeFirstElement(names)
+	ts.Empty(actual)
+}
+func (ts *TSNode) TestRemoveFirstElement2() {
+	names := []string{}
+	actual := removeFirstElement(names)
+	ts.Empty(actual)
+}
+
+func (ts *TSNode) TestRemoveFirstElement3() {
+	names := []string{"a", "b", "c"}
+	actual := removeFirstElement(names)
+	ts.Equal([]string{"b", "c"}, actual)
+}
+
+func (ts *TSNode) TestFindNode1() {
+	nodeTest.AddToNode("Tenerife", "La Matanza", "/turbo")
+	nodeTest.AddToNode("Tenerife", "Santa Ursula", "/")
+	nodeTest.AddToNode("Tenerife", "La Victoria", "/")
+
+	nodeTest.AddToNode("Canada", "Ontario", "/turbo1")
+	nodeTest.AddToNode("Canada", "Alberta", "/t")
+	nodeTest.AddToNode("Canada", "Yukon", "/x")
+
+	actual := nodeTest.FindNode("Canada")
+	ts.NotNil(actual)
+	child, found := actual.Children()["Alberta"]
+	ts.Equal(child.Name(), "Alberta")
+	ts.True(found)
+	ts.Equal(int64(1), child.Counter())
+}
+
+func (ts *TSNode) TestFindNode2() {
+	nodeTest.AddToNode("Tenerife", "La Matanza", "/turbo")
+	nodeTest.AddToNode("Tenerife", "Santa Ursula", "/")
+	nodeTest.AddToNode("Tenerife", "La Victoria", "/")
+
+	nodeTest.AddToNode("Canada", "Ontario", "/turbo1")
+	nodeTest.AddToNode("Canada", "Alberta", "/t")
+	nodeTest.AddToNode("Canada", "Yukon", "/x")
+
+	actual := nodeTest.FindNode("Canada")
+	ts.NotNil(actual)
+	child, found := actual.Children()["Manitoba"]
+	ts.Nil(child)
+	ts.False(found)
+}
+
+func (ts *TSNode) TestFindNode3() {
+	nodeTest.AddToNode("Tenerife", "La Matanza", "/turbo")
+	nodeTest.AddToNode("Tenerife", "Santa Ursula", "/")
+	nodeTest.AddToNode("Tenerife", "La Victoria", "/")
+
+	nodeTest.AddToNode("Canada", "Ontario", "/turbo1")
+	nodeTest.AddToNode("Canada", "Alberta", "/t")
+	nodeTest.AddToNode("Canada", "Yukon", "/x")
+
+	actual := nodeTest.FindNode("Alberta")
+	ts.NotNil(actual)
+	child, found := actual.Children()["Calgary"]
+	ts.Nil(child)
+	ts.False(found)
+}
