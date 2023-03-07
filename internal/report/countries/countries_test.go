@@ -3,11 +3,15 @@ package countries
 import (
 	"testing"
 
+	"github.com/AdanJSuarez/maxmind/internal/node"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
 
 var (
-	countriesTest *Countries
+	countriesTest *countries
+	nodeMock      *node.MockNode
+	mockChild     *node.MockNode
 )
 
 type TSCountries struct{ suite.Suite }
@@ -17,79 +21,92 @@ func TestRunTSCountries(t *testing.T) {
 }
 
 func (ts *TSCountries) BeforeTest(_, _ string) {
+	nodeMock = node.NewMockNode(ts.T())
+	mockChild = node.NewMockNode(ts.T())
 	countriesTest = New()
+	countriesTest.countries = nodeMock
 }
 
 func (ts *TSCountries) TestCountriesInitialization() {
 	ts.NotNil(countriesTest.countries)
 }
 
+func (ts *TSCountries) TestName() {
+	nodeMock.On("Name", mock.Anything).Return("Countries")
+	name := countriesTest.Name()
+	ts.Equal("Countries", name)
+}
+
 func (ts *TSCountries) TestAddToCountries1() {
+	nodeMock.On("AddToNode", mock.Anything, mock.Anything, mock.Anything).Return()
 	countriesTest.AddToCountries("United States", "Montana", "/")
 
-	country := countriesTest.countries.Children()["United States"]
-	ts.Equal(int64(1), country.Counter())
-
-	subdivision := country.Children()["Montana"]
-	ts.Equal(int64(1), subdivision.Counter())
-
-	webpage := subdivision.Data()["/"]
-	ts.Equal(int64(1), webpage)
+	ts.True(nodeMock.AssertNumberOfCalls(ts.T(), "AddToNode", 1))
 }
 
-func (ts *TSCountries) TestAddToCountries2() {
-	countriesTest.AddToCountries("United States", "Montana", "/")
-	countriesTest.AddToCountries("United States", "Montana", "/")
+func (ts *TSCountries) TestTopAreasAtLestOneVisitor() {
+	mockChild.On("Counter").Return(int64(1))
+	mockChild.On("Name").Return("Tenerife")
+	mockChild.On("SortedData", mock.Anything).Return([]node.Data{node.NewData("/", 1)})
+	nodeMock.On("FindNode", mock.Anything).Return(nodeMock)
+	nodeMock.On("SortedChildrenByCounter").Return([]node.Node{mockChild})
 
-	country := countriesTest.countries.Children()["United States"]
-	ts.Equal(int64(2), country.Counter())
-
-	subdivision := country.Children()["Montana"]
-	ts.Equal(int64(2), subdivision.Counter())
-
-	webpage := subdivision.Data()["/"]
-	ts.Equal(int64(2), webpage)
+	info := countriesTest.TopAreas("Countries,", "", 10)
+	ts.Equal([]Info{{Name: "Tenerife", Visit: 1, TopPage: "/"}}, info)
 }
 
-func (ts *TSCountries) TestAddToCountries3() {
-	countriesTest.AddToCountries("United States", "Montana", "/")
-	countriesTest.AddToCountries("United States", "Montana", "/turbo")
+func (ts *TSCountries) TestTopAreasAtTwoVisitors() {
+	mockChild.On("Counter").Return(int64(2))
+	mockChild.On("Name").Return("Tenerife")
+	mockChild.On("SortedData", mock.Anything).Return([]node.Data{node.NewData("/", 2)})
+	nodeMock.On("FindNode", mock.Anything).Return(nodeMock)
+	nodeMock.On("SortedChildrenByCounter").Return([]node.Node{mockChild})
 
-	country := countriesTest.countries.Children()["United States"]
-	ts.Equal(int64(2), country.Counter())
-
-	subdivision := country.Children()["Montana"]
-	ts.Equal(int64(2), subdivision.Counter())
-
-	webpage1 := subdivision.Data()["/"]
-	ts.Equal(int64(1), webpage1)
-
-	webpage2 := subdivision.Data()["/turbo"]
-	ts.Equal(int64(1), webpage2)
+	info := countriesTest.TopAreas("Countries,", "", 10)
+	expected := []Info{
+		{Name: "Tenerife", Visit: 2, TopPage: "/"},
+	}
+	ts.Equal(expected, info)
 }
 
-func (ts *TSCountries) TestAddToCountries4() {
-	countriesTest.AddToCountries("United States", "Alabama", "/")
-	countriesTest.AddToCountries("United States", "Montana", "/turbo")
+func (ts *TSCountries) TestTopAreasNoVisitor() {
+	mockChild.On("Counter").Return(int64(0))
+	nodeMock.On("FindNode", mock.Anything).Return(nodeMock)
+	nodeMock.On("SortedChildrenByCounter").Return([]node.Node{mockChild})
 
-	country := countriesTest.countries.Children()["United States"]
-	ts.Equal(int64(2), country.Counter())
+	info := countriesTest.TopAreas("Countries,", "", 10)
+	ts.Empty(info)
+}
 
-	subdivision1 := country.Children()["Montana"]
-	ts.Equal(int64(1), subdivision1.Counter())
+func (ts *TSCountries) TestTopAreasSelectNoMoreThanTopNumber() {
+	mockChild.On("Counter").Return(int64(2))
+	mockChild.On("Name").Return("Tenerife")
+	mockChild.On("SortedData", mock.Anything).Return([]node.Data{node.NewData("/", 2)})
+	nodeMock.On("FindNode", mock.Anything).Return(nodeMock)
+	nodeMock.On("SortedChildrenByCounter").Return([]node.Node{mockChild, mockChild, mockChild})
 
-	webpage1 := subdivision1.Data()["/"]
-	ts.Equal(int64(0), webpage1)
+	info := countriesTest.TopAreas("Countries,", "", 2)
+	expected := []Info{
+		{Name: "Tenerife", Visit: 2, TopPage: "/"},
+		{Name: "Tenerife", Visit: 2, TopPage: "/"},
+	}
+	ts.Equal(expected, info)
+}
 
-	webpage2 := subdivision1.Data()["/turbo"]
-	ts.Equal(int64(1), webpage2)
+func (ts *TSCountries) TestTopPage() {
+	data1 := node.NewData("/", 3)
+	data2 := node.NewData("/turbo", 2)
+	data := []node.Data{data1, data2}
+	nodeMock.On("SortedData", mock.Anything).Return(data)
 
-	subdivision2 := country.Children()["Alabama"]
-	ts.Equal(int64(1), subdivision1.Counter())
+	page := countriesTest.topPage(nodeMock, "")
+	ts.Equal("/", page)
+}
 
-	webpage3 := subdivision2.Data()["/"]
-	ts.Equal(int64(1), webpage3)
+func (ts *TSCountries) TestNoTopPage() {
+	data := []node.Data{}
+	nodeMock.On("SortedData", mock.Anything).Return(data)
 
-	webpage4 := subdivision2.Data()["/turbo"]
-	ts.Equal(int64(0), webpage4)
+	page := countriesTest.topPage(nodeMock, "")
+	ts.Equal("", page)
 }

@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	nodeTest *Node
+	nodeTest Node
 )
 
 type TSNode struct{ suite.Suite }
@@ -21,21 +21,21 @@ func (ts *TSNode) BeforeTest(_, _ string) {
 }
 
 func (ts *TSNode) TestNodeInitialized() {
-	ts.Equal("Spain", nodeTest.name)
-	ts.NotNil(nodeTest.data)
-	ts.NotNil(nodeTest.children)
+	ts.Equal("Spain", nodeTest.Name())
+	ts.NotNil(nodeTest.Data())
+	ts.NotNil(nodeTest.Children())
 }
 
 func (ts *TSNode) TestAddToNode() {
 	nodeTest.AddToNode("Tenerife", "/")
-	pageCounter := nodeTest.data["/"]
+	pageCounter := nodeTest.Data()["/"]
 	ts.Equal(int64(1), pageCounter)
 
-	child := nodeTest.children["Tenerife"]
-	ts.Equal("Tenerife", child.name)
-	ts.Equal(int64(1), child.counter)
+	child := nodeTest.Children()["Tenerife"]
+	ts.Equal("Tenerife", child.Name())
+	ts.Equal(int64(1), child.Counter())
 
-	grantChild := nodeTest.children["Tenerife"].children
+	grantChild := nodeTest.Children()["Tenerife"].Children()
 	ts.Empty(grantChild)
 }
 
@@ -43,14 +43,14 @@ func (ts *TSNode) TestAddToNodeTwo() {
 	nodeTest.AddToNode("Tenerife", "/")
 	nodeTest.AddToNode("Tenerife", "/")
 
-	pageCounter := nodeTest.data["/"]
+	pageCounter := nodeTest.Data()["/"]
 	ts.Equal(int64(2), pageCounter)
 
-	child := nodeTest.children["Tenerife"]
-	ts.Equal("Tenerife", child.name)
-	ts.Equal(int64(2), child.counter)
+	child := nodeTest.Children()["Tenerife"]
+	ts.Equal("Tenerife", child.Name())
+	ts.Equal(int64(2), child.Counter())
 
-	grantChild := nodeTest.children["Tenerife"].children
+	grantChild := nodeTest.Children()["Tenerife"].Children()
 	ts.Empty(grantChild)
 }
 
@@ -58,20 +58,20 @@ func (ts *TSNode) TestAddToNodeTwoDifferent() {
 	nodeTest.AddToNode("Tenerife", "/")
 	nodeTest.AddToNode("Tenerife", "/turbo")
 
-	pageCounter1 := nodeTest.data["/"]
+	pageCounter1 := nodeTest.Data()["/"]
 	ts.Equal(int64(1), pageCounter1)
 
-	pageCounter2 := nodeTest.data["/turbo"]
+	pageCounter2 := nodeTest.Data()["/turbo"]
 	ts.Equal(int64(1), pageCounter2)
 
-	child := nodeTest.children["Tenerife"]
-	ts.Equal("Tenerife", child.name)
-	ts.Equal(int64(2), child.counter)
+	child := nodeTest.Children()["Tenerife"]
+	ts.Equal("Tenerife", child.Name())
+	ts.Equal(int64(2), child.Counter())
 
-	ts.Equal(int64(1), child.data["/"])
-	ts.Equal(int64(1), child.data["/turbo"])
+	ts.Equal(int64(1), child.Data()["/"])
+	ts.Equal(int64(1), child.Data()["/turbo"])
 
-	grantChild := nodeTest.children["Tenerife"].children
+	grantChild := nodeTest.Children()["Tenerife"].Children()
 	ts.Empty(grantChild)
 }
 
@@ -79,41 +79,41 @@ func (ts *TSNode) TestAddToNodeTwoChild() {
 	nodeTest.AddToNode("Madrid", "/")
 	nodeTest.AddToNode("Tenerife", "/turbo")
 
-	pageCounter1 := nodeTest.data["/"]
+	pageCounter1 := nodeTest.Data()["/"]
 	ts.Equal(int64(1), pageCounter1)
 
-	pageCounter2 := nodeTest.data["/turbo"]
+	pageCounter2 := nodeTest.Data()["/turbo"]
 	ts.Equal(int64(1), pageCounter2)
 
-	child1 := nodeTest.children["Tenerife"]
-	ts.Equal("Tenerife", child1.name)
-	ts.Equal(int64(1), child1.counter)
+	child1 := nodeTest.Children()["Tenerife"]
+	ts.Equal("Tenerife", child1.Name())
+	ts.Equal(int64(1), child1.Counter())
 
-	ts.Equal(int64(0), child1.data["/"])
-	ts.Equal(int64(1), child1.data["/turbo"])
+	ts.Equal(int64(0), child1.Data()["/"])
+	ts.Equal(int64(1), child1.Data()["/turbo"])
 
-	child2 := nodeTest.children["Madrid"]
-	ts.Equal("Madrid", child2.name)
-	ts.Equal(int64(1), child2.counter)
+	child2 := nodeTest.Children()["Madrid"]
+	ts.Equal("Madrid", child2.Name())
+	ts.Equal(int64(1), child2.Counter())
 
-	ts.Equal(int64(1), child2.data["/"])
-	ts.Equal(int64(0), child2.data["/turbo"])
+	ts.Equal(int64(1), child2.Data()["/"])
+	ts.Equal(int64(0), child2.Data()["/turbo"])
 
-	grantChild := nodeTest.children["Tenerife"].children
+	grantChild := nodeTest.Children()["Tenerife"].Children()
 	ts.Empty(grantChild)
 }
 
 func (ts *TSNode) TestAddToNodeGrandChild() {
 	nodeTest.AddToNode("Tenerife", "Santa Ursula", "/")
 
-	pageCounter := nodeTest.data["/"]
+	pageCounter := nodeTest.Data()["/"]
 	ts.Equal(int64(1), pageCounter)
 
-	child := nodeTest.children["Tenerife"]
-	ts.Equal("Tenerife", child.name)
-	ts.Equal(int64(1), child.counter)
+	child := nodeTest.Children()["Tenerife"]
+	ts.Equal("Tenerife", child.Name())
+	ts.Equal(int64(1), child.Counter())
 
-	grantChild := nodeTest.children["Tenerife"].children
-	ts.Equal("Santa Ursula", grantChild["Santa Ursula"].name)
-	ts.Equal(int64(1), grantChild["Santa Ursula"].counter)
+	grantChild := nodeTest.Children()["Tenerife"].Children()
+	ts.Equal("Santa Ursula", grantChild["Santa Ursula"].Name())
+	ts.Equal(int64(1), grantChild["Santa Ursula"].Counter())
 }
