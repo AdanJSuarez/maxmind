@@ -11,12 +11,12 @@ type Node struct {
 
 // TODO: Move Data to its own file
 type Data struct {
-	key   string
+	name  string
 	value int64
 }
 
-func (d *Data) Key() string {
-	return d.key
+func (d *Data) Name() string {
+	return d.name
 }
 
 func (d *Data) Value() int64 {
@@ -101,10 +101,10 @@ func (n *Node) SortedChildrenByCounter() []Data {
 func (n *Node) FindNode(name string) *Node {
 	todo := make(map[string]*Node)
 	visited := make(map[string]*Node)
-	return n.breadthFirstSearchNode(name, n, todo, visited)
+	return n.traverseForNode(name, n, todo, visited)
 }
 
-func (n *Node) breadthFirstSearchNode(name string, node *Node, todo map[string]*Node, visited map[string]*Node) *Node {
+func (n *Node) traverseForNode(name string, node *Node, todo map[string]*Node, visited map[string]*Node) *Node {
 	if n.contain(node, visited) {
 		return nil
 	}
@@ -114,10 +114,10 @@ func (n *Node) breadthFirstSearchNode(name string, node *Node, todo map[string]*
 	for key, val := range node.children {
 		todo[key] = val
 	}
-	return n.breadthFirstSearchNodes(name, todo, visited)
+	return n.traverseForTodo(name, todo, visited)
 }
 
-func (n *Node) breadthFirstSearchNodes(name string, todo map[string]*Node, visited map[string]*Node) *Node {
+func (n *Node) traverseForTodo(name string, todo map[string]*Node, visited map[string]*Node) *Node {
 	if len(todo) == 0 {
 		return nil
 	}
@@ -129,7 +129,7 @@ func (n *Node) breadthFirstSearchNodes(name string, todo map[string]*Node, visit
 		break
 	}
 	delete(todo, nodeName)
-	return n.breadthFirstSearchNode(name, node, todo, visited)
+	return n.traverseForNode(name, node, todo, visited)
 }
 
 // addToData adds data to node.data and increases its counter
@@ -163,17 +163,3 @@ func (n *Node) contain(node *Node, nodes map[string]*Node) bool {
 	_, found := nodes[node.name]
 	return found
 }
-
-// Function for node:
-// Read a node with todo, visited.
-// If node visited return
-// Else:
-// Add to visited.
-// Add children to todos.
-// Compute on that node.
-// Call function for todos.
-
-// Function for todo:
-// If todo is empty, return
-// If todo not empty:
-// Function for node[0] with removed from todo.

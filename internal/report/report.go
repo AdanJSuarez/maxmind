@@ -14,6 +14,7 @@ const (
 	logPatter    = `[a-f0-9]+/css/|[a-f0-9]+/images/|/images/|[a-f0-9]+/js/|/entry-images/|/static/|/robots.txt/?$|/favicon.ico/?$|\w\.rss/?$|\w\.atom/?$`
 	excludedPage = "/"
 	unitedStates = "United States"
+	top          = 10
 )
 
 type Report struct {
@@ -85,14 +86,14 @@ func (r *Report) printReport() {
 
 func (r *Report) printCountries() {
 	fmt.Println("==> Countries:")
-	for idx, val := range r.countries.TopAreas(r.countries.Countries().Name(), excludedPage) {
+	for idx, val := range r.countries.TopAreas(r.countries.Countries().Name(), excludedPage, top) {
 		fmt.Printf("%d : %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, val.Name, val.Visit, val.TopPage)
 	}
 }
 
 func (r *Report) printUSA() {
 	fmt.Println("==> United States:")
-	for idx, val := range r.countries.TopAreas(unitedStates, excludedPage) {
+	for idx, val := range r.countries.TopAreas(unitedStates, excludedPage, top) {
 		fmt.Printf("%d: %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, val.Name, val.Visit, val.TopPage)
 	}
 }
