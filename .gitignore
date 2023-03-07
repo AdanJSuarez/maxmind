@@ -23,3 +23,6 @@ asset/
 
 # Mocks
 mock_*
+
+# Test Coverage reports
+coverage/

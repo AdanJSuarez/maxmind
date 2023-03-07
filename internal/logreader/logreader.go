@@ -9,14 +9,16 @@ import (
 )
 
 type LogReader struct {
+	wg       *sync.WaitGroup
 	linesCh  chan string
 	fileSys  afero.Fs
 	file     afero.File
 	filePath string
 }
 
-func New(filePath string, linesCh chan string) *LogReader {
+func New(wg *sync.WaitGroup, filePath string, linesCh chan string) *LogReader {
 	return &LogReader{
+		wg:       wg,
 		fileSys:  afero.NewOsFs(),
 		linesCh:  linesCh,
 		filePath: filePath,
@@ -34,15 +36,18 @@ func (lr *LogReader) Open() error {
 }
 
 func (lr *LogReader) Close() error {
-	return lr.file.Close()
+	if lr.file != nil {
+		return lr.file.Close()
+	}
+	return nil
 }
 
 /*
 ReadLinesFromFile returns nil and sends the lines read through the channel.
 It close the channel to sync with the receiver indicating the end of the file.
 */
-func (lr *LogReader) ReadLinesFromFile(wg *sync.WaitGroup) {
-	defer wg.Done()
+func (lr *LogReader) ReadLinesFromFile() {
+	defer lr.wg.Done()
 	fmt.Printf("==> Reading lines of file: %s\n", lr.filePath)
 
 	lr.sendLinesToLinesCh()

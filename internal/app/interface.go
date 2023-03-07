@@ -1,8 +1,6 @@
 package app
 
 import (
-	"sync"
-
 	"github.com/AdanJSuarez/maxmind/internal/geoinfo"
 	"github.com/AdanJSuarez/maxmind/internal/logparser"
 )
@@ -22,7 +20,7 @@ type geoInfo interface {
 
 type logReader interface {
 	Close() error
-	ReadLinesFromFile(wg *sync.WaitGroup)
+	ReadLinesFromFile()
 }
 
 type countryReport interface {

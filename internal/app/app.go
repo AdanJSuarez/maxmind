@@ -43,7 +43,7 @@ func New(wg *sync.WaitGroup, config configuration.Configuration) (*App, error) {
 // the report
 func (a *App) Start() {
 	a.wg.Add(2)
-	go a.logReader.ReadLinesFromFile(a.wg)
+	go a.logReader.ReadLinesFromFile()
 	go a.populateData()
 	a.wg.Wait()
 	a.report.Generate()
@@ -66,7 +66,7 @@ func (a *App) initializeApp(wg *sync.WaitGroup) error {
 		return err
 	}
 
-	if err := a.setLogReader(a.linesCh); err != nil {
+	if err := a.setLogReader(); err != nil {
 		return err
 	}
 
@@ -98,8 +98,8 @@ func (a *App) setLogParser() error {
 	return nil
 }
 
-func (a *App) setLogReader(linesCh chan string) error {
-	logReader := logreader.New(a.config.LogFile, linesCh)
+func (a *App) setLogReader() error {
+	logReader := logreader.New(a.wg, a.config.LogFile, a.linesCh)
 	if err := logReader.Open(); err != nil {
 		return err
 	}
