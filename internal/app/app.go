@@ -27,8 +27,9 @@ type App struct {
 
 func New(wg *sync.WaitGroup, config configuration.Configuration) (*App, error) {
 	app := &App{
-		wg:     wg,
-		config: config,
+		wg:      wg,
+		config:  config,
+		linesCh: make(chan string, channelSize),
 	}
 
 	if err := app.initializeApp(wg); err != nil {
@@ -55,13 +56,12 @@ func (a *App) Close() {
 
 // initializeApp initializes all the dependencies. It returns an error otherwise.
 func (a *App) initializeApp(wg *sync.WaitGroup) error {
-	linesCh := make(chan string, channelSize)
 
 	if err := a.setLogParser(); err != nil {
 		return err
 	}
 
-	if err := a.setLogReader(linesCh); err != nil {
+	if err := a.setLogReader(a.linesCh); err != nil {
 		return err
 	}
 
@@ -105,9 +105,7 @@ func (a *App) setLogReader(linesCh chan string) error {
 
 func (a *App) populateData() {
 	defer a.wg.Done()
-	fmt.Println("==> Parsing lines and populating data")
 	for line := range a.linesCh {
-		fmt.Println(line)
 		lineLog, err := a.logParser.Parse(line)
 		if err != nil {
 			fmt.Printf("log line error: %s: %v\n", line, err)

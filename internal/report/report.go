@@ -29,6 +29,7 @@ func New() *Report {
 }
 
 func (r *Report) Generate() {
+	fmt.Println("==> World and US report:")
 	r.printReport()
 }
 
