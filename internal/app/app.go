@@ -99,8 +99,8 @@ func (a *App) setLogParser() error {
 }
 
 func (a *App) setLogReader(linesCh chan string) error {
-	logReader, err := logreader.New(a.config.LogFile, linesCh)
-	if err != nil {
+	logReader := logreader.New(a.config.LogFile, linesCh)
+	if err := logReader.Open(); err != nil {
 		return err
 	}
 

@@ -26,15 +26,23 @@ func TestRunTSLogReader(t *testing.T) {
 
 func (ts *TSLogReader) BeforeTest(_, _ string) {
 	linesChTest = make(chan string, 10)
-	readerTest, _ := New(fileNameTest, linesChTest)
+	readerTest = New(fileNameTest, linesChTest)
 	readerTest.fileSys = afero.NewMemMapFs()
 	afero.WriteFile(readerTest.fileSys, fileNameTest, []byte(fakeLog), 0644)
 }
 
+func (ts *TSLogReader) TestReadLinesFromFileForValidFile() {
+	err := readerTest.Open()
+	ts.NoError(err)
+
+}
+
 func (ts *TSLogReader) TestReadLinesFromFileForInvalidFile() {
-	readerTest, err := New("logreader_test.go", linesChTest)
-	ts.Nil(readerTest)
-	ts.ErrorContains(err, "file does not exist")
+	readerTest := New("fakeFile.log", linesChTest)
+	ts.NotNil(readerTest)
+	err := readerTest.Open()
+	ts.ErrorContains(err, "no such file or directory")
+
 }
 
 func (ts *TSLogReader) TestSendLineToLinesCh() {
@@ -42,9 +50,8 @@ func (ts *TSLogReader) TestSendLineToLinesCh() {
 		log := <-readerTest.linesCh
 		return len(log) > 0
 	}
-	fileTest, err := readerTest.fileSys.Open(fileNameTest)
+	err := readerTest.Open()
 	ts.NoError(err)
-	readerTest.file = fileTest
 
 	go readerTest.sendLinesToLinesCh()
 	ts.Eventually(condition, 5*time.Second, 200*time.Microsecond)
