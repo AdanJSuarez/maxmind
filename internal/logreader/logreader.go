@@ -15,20 +15,22 @@ type LogReader struct {
 	filePath string
 }
 
-func New(filePath string, linesCh chan string) (*LogReader, error) {
-	logReader := &LogReader{}
-	afero := afero.NewOsFs()
-	logReader.fileSys = afero
-	logReader.linesCh = linesCh
-	logReader.filePath = filePath
+func New(filePath string, linesCh chan string) *LogReader {
+	return &LogReader{
+		fileSys:  afero.NewOsFs(),
+		linesCh:  linesCh,
+		filePath: filePath,
+	}
+}
 
-	file, err := logReader.fileSys.Open(logReader.filePath)
+func (lr *LogReader) Open() error {
+	file, err := lr.fileSys.Open(lr.filePath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	logReader.file = file
-	return logReader, nil
+	lr.file = file
+	return nil
 }
 
 func (lr *LogReader) Close() error {
