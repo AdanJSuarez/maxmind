@@ -1,18 +1,11 @@
 package report
 
-import (
-	geoinfo "github.com/AdanJSuarez/maxmind/internal/geoinfo"
-	"github.com/AdanJSuarez/maxmind/internal/logparser"
-)
+import "github.com/AdanJSuarez/maxmind/internal/report/countries"
 
-//go:generate mockery --inpackage --name=logParser
-//go:generate mockery --inpackage --name=geoInfo
+//go:generate mockery --inpackage --name=countriesData
 
-type logParser interface {
-	Parse(line string) (logparser.Log, error)
-}
-
-type geoInfo interface {
-	OpenDB() error
-	GetIPInfo(IPString string) geoinfo.GeoInfoModel
+type countriesData interface {
+	Name() string
+	AddToCountries(countryName, subdivisionName, webpageName string)
+	TopAreas(name, pageExcluded string, topNumber int) []countries.Info
 }
