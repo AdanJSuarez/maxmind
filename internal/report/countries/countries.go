@@ -5,8 +5,8 @@ import (
 )
 
 const (
-	oneVisitor = 1
-	countries  = "Countries"
+	minVisitors   = 1
+	countriesName = "Countries"
 )
 
 type Info struct {
@@ -15,63 +15,64 @@ type Info struct {
 	TopPage string
 }
 
-type Countries struct {
-	countries *node.Node
+type countries struct {
+	countries node.Node
 }
 
-func New() *Countries {
-	return &Countries{
-		countries: node.New(countries),
+func New() *countries {
+	return &countries{
+		countries: node.New(countriesName),
 	}
 }
 
-func (c *Countries) AddToCountries(countryName, subdivisionName, webpageName string) {
-	c.countries.AddToNode(countryName, subdivisionName, webpageName)
+func (c *countries) Name() string {
+	return c.countries.Name()
 }
 
-func (c *Countries) Name() string {
-	return c.countries.Name()
+func (c *countries) AddToCountries(countryName, subdivisionName, webpageName string) {
+	c.countries.AddToNode(countryName, subdivisionName, webpageName)
 }
 
 // TopAreas returns the sorted Info about the area required by name.
 // Area could be country, subdivision or others
-func (c *Countries) TopAreas(name, excluded string, topNumber int) []Info {
+func (c *countries) TopAreas(name, pageExcluded string, topNumber int) []Info {
 	area := c.countries.FindNode(name)
-	return c.topAreas(area, excluded, topNumber)
+	return c.topAreas(area, pageExcluded, topNumber)
 }
 
-func (c *Countries) topAreas(areas *node.Node, excluded string, topNumber int) []Info {
+func (c *countries) topAreas(areas node.Node, pageExcluded string, topNumber int) []Info {
 	var result []Info
-	for _, child := range areas.SortedChildrenByCounter() {
-		area, found := areas.Children()[child.Name()]
-		if !found || c.notEnoughVisitors(child.Value()) {
+	sortedChildren := areas.SortedChildrenByCounter()
+	for _, child := range sortedChildren {
+		if c.notEnoughVisitors(child.Counter()) {
 			continue
 		}
 
-		areaInfo := c.newInfo(area, child.Name(), excluded, child.Value())
+		areaInfo := c.newInfo(child, pageExcluded, child.Counter())
 		result = append(result, areaInfo)
-		if len(result) == topNumber {
+		if len(result) >= topNumber {
 			break
 		}
 	}
 	return result
 }
 
-func (c *Countries) topPage(area *node.Node, excluded string) string {
-	if len(area.SortedData(excluded)) == 0 {
+func (c *countries) notEnoughVisitors(visitors int64) bool {
+	return visitors < minVisitors
+}
+
+func (c *countries) newInfo(area node.Node, pageExcluded string, visits int64) Info {
+	return Info{
+		Name:    area.Name(),
+		Visit:   visits,
+		TopPage: c.topPage(area, pageExcluded),
+	}
+}
+
+func (c *countries) topPage(area node.Node, pageExcluded string) string {
+	sortedData := area.SortedData(pageExcluded)
+	if len(sortedData) == 0 {
 		return ""
 	}
-	return area.SortedData(excluded)[0].Name()
-}
-
-func (c *Countries) notEnoughVisitors(value int64) bool {
-	return value < oneVisitor
-}
-
-func (c *Countries) newInfo(area *node.Node, name, excluded string, visits int64) Info {
-	return Info{
-		Name:    name,
-		Visit:   visits,
-		TopPage: c.topPage(area, excluded),
-	}
+	return sortedData[0].Name()
 }
