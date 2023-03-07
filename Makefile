@@ -36,3 +36,9 @@ cover:
 build:
 	@echo "==> Build: Generate binary on /bin folder <=="
 	go build -o ./bin/maxmind ./cmd/maxmind.go
+
+.PHONY: cover
+cover:
+	@echo "==> Visual coverage for $(FOLDER)"
+	go test $(FOLDER) -coverprofile=coverage/lastCoverage.out
+	go tool cover -html=coverage/lastCoverage.out
