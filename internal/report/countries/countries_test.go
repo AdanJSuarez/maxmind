@@ -8,6 +8,8 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
+const countriesNameTest = "Countries"
+
 var (
 	countriesTest *countries
 	nodeMock      *node.MockNode
@@ -23,7 +25,7 @@ func TestRunTSCountries(t *testing.T) {
 func (ts *TSCountries) BeforeTest(_, _ string) {
 	nodeMock = node.NewMockNode(ts.T())
 	mockChild = node.NewMockNode(ts.T())
-	countriesTest = New()
+	countriesTest = New(countriesNameTest)
 	countriesTest.countries = nodeMock
 }
 
@@ -32,7 +34,7 @@ func (ts *TSCountries) TestCountriesInitialization() {
 }
 
 func (ts *TSCountries) TestName() {
-	nodeMock.On("Name", mock.Anything).Return("Countries")
+	nodeMock.On("Name", mock.Anything).Return(countriesNameTest)
 	name := countriesTest.Name()
 	ts.Equal("Countries", name)
 }

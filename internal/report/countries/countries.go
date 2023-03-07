@@ -5,8 +5,7 @@ import (
 )
 
 const (
-	minVisitors   = 1
-	countriesName = "Countries"
+	minVisitors = 1
 )
 
 type Info struct {
@@ -19,16 +18,19 @@ type countries struct {
 	countries node.Node
 }
 
-func New() *countries {
+// New returns a initialized instance of countries.
+func New(name string) *countries {
 	return &countries{
-		countries: node.New(countriesName),
+		countries: node.New(name),
 	}
 }
 
+// Name returns countries name.
 func (c *countries) Name() string {
 	return c.countries.Name()
 }
 
+// AddToCountries adds a new element to countries.
 func (c *countries) AddToCountries(countryName, subdivisionName, webpageName string) {
 	c.countries.AddToNode(countryName, subdivisionName, webpageName)
 }
@@ -40,9 +42,11 @@ func (c *countries) TopAreas(name, pageExcluded string, topNumber int) []Info {
 	return c.topAreas(area, pageExcluded, topNumber)
 }
 
+// topAreas get the slice of children sorted by counter, then check if there is the
+// minimum visits and then create a slice of info with the children Info up to a topNumber.
 func (c *countries) topAreas(areas node.Node, pageExcluded string, topNumber int) []Info {
 	var result []Info
-	sortedChildren := areas.SortedChildrenByCounter()
+	sortedChildren := areas.SortedChildren()
 	for _, child := range sortedChildren {
 		if c.notEnoughVisitors(child.Counter()) {
 			continue

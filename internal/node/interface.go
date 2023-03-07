@@ -7,7 +7,7 @@ type Node interface {
 	Counter() int64
 	Data() map[string]int64
 	Children() map[string]Node
-	SortedChildrenByCounter() []Node
+	SortedChildren() []Node
 	SortedData(pageExcluded string) []Data
 	AddToNode(parameters ...string)
 	FindNode(name string) Node

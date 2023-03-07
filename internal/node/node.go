@@ -70,8 +70,8 @@ func (n *node) SortedData(pageExcluded string) []Data {
 }
 
 // SortedChildrenByCounter returns a sorted slice of Children by its counter
-func (n *node) SortedChildrenByCounter() []Node {
-	sorted := make([]Node, 0, len(n.data))
+func (n *node) SortedChildren() []Node {
+	sorted := make([]Node, 0, len(n.children))
 	for _, val := range n.children {
 		sorted = append(sorted, val)
 	}
@@ -83,39 +83,11 @@ func (n *node) SortedChildrenByCounter() []Node {
 	return sorted
 }
 
-// FindNode makes a Breadth-First Search and return the first node with "name"
+// FindNode makes a Breadth-First Search and returns the first node found.
 func (n *node) FindNode(name string) Node {
-	todo := make(map[string]Node)
-	visited := make(map[string]Node)
-	return n.traverseForNode(name, n, todo, visited)
-}
-
-func (n *node) traverseForNode(name string, node Node, todo map[string]Node, visited map[string]Node) Node {
-	if n.contain(node, visited) {
-		return nil
-	}
-	if node.Name() == name {
-		return node
-	}
-	for key, val := range node.Children() {
-		todo[key] = val
-	}
-	return n.traverseForTodo(name, todo, visited)
-}
-
-func (n *node) traverseForTodo(name string, todo map[string]Node, visited map[string]Node) Node {
-	if len(todo) == 0 {
-		return nil
-	}
-	var node Node
-	var nodeName string
-	for key, val := range todo {
-		node = val
-		nodeName = key
-		break
-	}
-	delete(todo, nodeName)
-	return n.traverseForNode(name, node, todo, visited)
+	todo := []Node{}
+	visited := []Node{}
+	return n.bfsForNode(name, n, todo, visited)
 }
 
 // addToData adds data to node.data and increases its counter
@@ -130,7 +102,7 @@ func (n *node) addToChild(parameters ...string) {
 		node := New(childName)
 		n.children[childName] = node
 	}
-	n.children[childName].AddToNode(n.removeFirstElement(parameters)...)
+	n.children[childName].AddToNode(removeFirstElement(parameters)...)
 }
 
 func (n *node) hasOneOrMoreElement(parametersLen int) bool {
@@ -141,11 +113,43 @@ func (n *node) hasTwoOrMoreElement(parametersLen int) bool {
 	return parametersLen > 1
 }
 
-func (n *node) removeFirstElement(parameters []string) []string {
-	return parameters[1:]
+func (n *node) bfsForNode(name string, node Node, todo []Node, visited []Node) Node {
+	if n.contain(node, visited) {
+		return nil
+	}
+
+	if node.Name() == name {
+		return node
+	}
+
+	for _, val := range node.Children() {
+		todo = append(todo, val)
+	}
+
+	return n.bfsForTodo(name, todo, visited)
 }
 
-func (n *node) contain(node Node, nodes map[string]Node) bool {
-	_, found := nodes[node.Name()]
-	return found
+func (n *node) bfsForTodo(name string, todo []Node, visited []Node) Node {
+	if len(todo) == 0 {
+		return nil
+	}
+
+	return n.bfsForNode(name, todo[0], removeFirstElement(todo), visited)
+}
+
+func (n *node) contain(node Node, nodes []Node) bool {
+	for _, n := range nodes {
+		if node.Name() == n.Name() {
+			return true
+		}
+	}
+	return false
+}
+
+// removeFirstElement returns the slice with the first element removed.
+func removeFirstElement[T any](values []T) []T {
+	if len(values) == 0 {
+		return values
+	}
+	return values[1:]
 }
