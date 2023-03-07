@@ -22,7 +22,7 @@ type Report struct {
 	logParser logParser
 	geoInfo   geoInfo
 	regex     *regexp.Regexp
-	countries *countries.Countries
+	data      *countries.Countries
 	linesCh   chan string
 }
 
@@ -33,7 +33,7 @@ func New(geoInfo geoInfo, channelSize int64, wg *sync.WaitGroup) *Report {
 	report.regex = regexp.MustCompile(logPatter)
 	report.logParser = report.setLogParser()
 	report.geoInfo = geoInfo
-	report.countries = countries.New()
+	report.data = countries.New()
 	report.linesCh = make(chan string, channelSize)
 	return report
 }
@@ -70,7 +70,7 @@ func (r *Report) extractDataFromLogs() {
 			continue
 		}
 		record := r.geoInfo.GetIPInfo(lineLog.IP)
-		r.countries.AddToCountries(record.CountryName, r.mainSubdivision(record), lineLog.RequestPath)
+		r.data.AddToCountries(record.CountryName, r.mainSubdivision(record), lineLog.RequestPath)
 	}
 }
 
@@ -86,14 +86,14 @@ func (r *Report) printReport() {
 
 func (r *Report) printCountries() {
 	fmt.Println("==> Countries:")
-	for idx, val := range r.countries.TopAreas(r.countries.Countries().Name(), excludedPage, top) {
+	for idx, val := range r.data.TopAreas(r.data.Countries().Name(), excludedPage, top) {
 		fmt.Printf("%d : %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, val.Name, val.Visit, val.TopPage)
 	}
 }
 
 func (r *Report) printUSA() {
 	fmt.Println("==> United States:")
-	for idx, val := range r.countries.TopAreas(unitedStates, excludedPage, top) {
+	for idx, val := range r.data.TopAreas(unitedStates, excludedPage, top) {
 		fmt.Printf("%d: %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, val.Name, val.Visit, val.TopPage)
 	}
 }
