@@ -3,6 +3,7 @@ package logreader
 import (
 	"bufio"
 	"fmt"
+	"sync"
 
 	"github.com/spf13/afero"
 )
@@ -10,6 +11,7 @@ import (
 type LogReader struct {
 	linesCh  chan string
 	fileSys  afero.Fs
+	file     afero.File
 	filePath string
 }
 
@@ -20,47 +22,37 @@ func New(filePath string, linesCh chan string) (*LogReader, error) {
 	logReader.linesCh = linesCh
 	logReader.filePath = filePath
 
-	if err := logReader.checkFile(); err != nil {
+	file, err := logReader.fileSys.Open(logReader.filePath)
+	if err != nil {
 		return nil, err
 	}
 
+	logReader.file = file
 	return logReader, nil
 }
 
 /*
-ReadLinesFromFile returns nil and sends through the channel the lines read.
+ReadLinesFromFile returns nil and sends the lines read through the channel.
 It close the channel to sync with the receiver indicating the end of the file.
-It returns an error if cannot open the file from the path.
 */
-func (lr *LogReader) ReadLinesFromFile() error {
-	file, err := lr.fileSys.Open(lr.filePath)
-	if err != nil {
-		return fmt.Errorf("error opening the file: %s: %v", lr.filePath, err)
-	}
-	defer file.Close()
+func (lr *LogReader) ReadLinesFromFile(wg *sync.WaitGroup) {
+	defer wg.Done()
+	defer lr.file.Close()
+	fmt.Printf("==> Reading lines of file: %s\n", lr.filePath)
 
-	lr.sendLinesToLinesCh(file)
-	return nil
+	lr.sendLinesToLinesCh()
 }
 
 // sendLinesToLinesCh reads line by line and sends them to linesCh.
 // It close the channel to sync with the receiver when it finished.
-func (lr *LogReader) sendLinesToLinesCh(file afero.File) {
+func (lr *LogReader) sendLinesToLinesCh() {
 	defer close(lr.linesCh)
 
-	fileScanner := bufio.NewScanner(file)
+	fileScanner := bufio.NewScanner(lr.file)
 
 	fileScanner.Split(bufio.ScanLines)
 
 	for fileScanner.Scan() {
 		lr.linesCh <- fileScanner.Text()
 	}
-}
-
-func (lr *LogReader) checkFile() error {
-	_, err := lr.fileSys.Stat(lr.filePath)
-	if err != nil {
-		return fmt.Errorf("error on file: %s: %v", lr.filePath, err)
-	}
-	return err
 }

@@ -29,8 +29,8 @@ func (c *Countries) AddToCountries(countryName, subdivisionName, webpageName str
 	c.countries.AddToNode(countryName, subdivisionName, webpageName)
 }
 
-func (c *Countries) Countries() *node.Node {
-	return c.countries
+func (c *Countries) Name() string {
+	return c.countries.Name()
 }
 
 // TopAreas returns the sorted Info about the area required by name.

@@ -31,11 +31,6 @@ func (ts *TSLogReader) BeforeTest(_, _ string) {
 	afero.WriteFile(readerTest.fileSys, fileNameTest, []byte(fakeLog), 0644)
 }
 
-func (ts *TSLogReader) TestReadLinesFromFileForValidFile() {
-	err := readerTest.ReadLinesFromFile()
-	ts.NoError(err)
-}
-
 func (ts *TSLogReader) TestReadLinesFromFileForInvalidFile() {
 	readerTest, err := New("logreader_test.go", linesChTest)
 	ts.Nil(readerTest)
@@ -49,7 +44,8 @@ func (ts *TSLogReader) TestSendLineToLinesCh() {
 	}
 	fileTest, err := readerTest.fileSys.Open(fileNameTest)
 	ts.NoError(err)
+	readerTest.file = fileTest
 
-	go readerTest.sendLinesToLinesCh(fileTest)
+	go readerTest.sendLinesToLinesCh()
 	ts.Eventually(condition, 5*time.Second, 200*time.Microsecond)
 }
