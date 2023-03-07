@@ -40,5 +40,5 @@ build:
 .PHONY: cover
 cover:
 	@echo "==> Visual coverage for $(FOLDER)"
-	go test $(FOLDER) -coverprofile=coverage/lastCoverage.out
-	go tool cover -html=coverage/lastCoverage.out
+	go test $(FOLDER) -coverprofile=.coverage/lastCoverage.out
+	go tool cover -html=.coverage/lastCoverage.out
