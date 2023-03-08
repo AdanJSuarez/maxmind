@@ -7,7 +7,7 @@ vendor:
 
 .PHONY: mock
 mock:
-	@echo "==> Generating mocks for unit test 🇪🇸 <=="
+	@echo "==> Generating mocks for unit test <=="
 	go generate ./...
 
 .PHONE: rmmock
@@ -17,18 +17,18 @@ rmmock:
 
 .PHONY: test
 test:
-	@echo "==> Running Unit Tests 🎮 <=="
+	@echo "==> Running Unit Tests <=="
 	go test ./... -cover
 
 .PHONY: testmock
 testmock:
-	@echo "==> Generating mocks and then run unit tests 🏀 <=="
+	@echo "==> Generating mocks and then run unit tests <=="
 	make mock
 	make test
 
 .PHONY: build
 build:
-	@echo "==> Build: Generate binary on /bin folder <=="
+	@echo "==> Build: Generate binary on /bin folder 🎮 <=="
 	go build -o ./bin/maxmind -ldflags "-s -w" ./cmd/maxmind.go
 
 .PHONY: cover

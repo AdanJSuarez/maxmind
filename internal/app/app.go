@@ -117,10 +117,10 @@ func (a *App) populateData() {
 			continue
 		}
 
-		if a.report.ShouldExclude(lineLog.RequestPath) {
+		if a.report.ShouldExclude(lineLog.RequestPath()) {
 			continue
 		}
-		geoInfoData := a.geoInfo.GetIPInfo(lineLog.IP)
-		a.report.AddData(geoInfoData.CountryName(), a.report.Subdivision(geoInfoData.Subdivisions()), lineLog.RequestPath)
+		geoInfoData := a.geoInfo.GetIPInfo(lineLog.IP())
+		a.report.AddData(geoInfoData.CountryName(), a.report.Subdivision(geoInfoData.Subdivisions()), lineLog.RequestPath())
 	}
 }

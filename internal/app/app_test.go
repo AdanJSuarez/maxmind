@@ -71,7 +71,7 @@ func (ts *TSApp) TestInitializationOnError() {
 
 func (ts *TSApp) TestStart() {
 	logReaderMock.On("ReadLinesFromFile").Return()
-	logParserMock.On("Parse", mock.Anything).Return(logparser.Log{RequestPath: "/turbo"}, nil)
+	logParserMock.On("Parse", mock.Anything).Return(logparser.NewLog("a", "b", "c", "/turbo", int64(200), 1), nil)
 	geoInfoMock.On("GetIPInfo", mock.Anything).Return(geoinfo.GeoInfoData{})
 	countryReportMock.On("ShouldExclude", mock.Anything).Return(false)
 	countryReportMock.On("Subdivision", mock.Anything).Return("fake")
@@ -102,7 +102,7 @@ func (ts *TSApp) TestCloseNoError() {
 }
 
 func (ts *TSApp) TestPopulateData() {
-	logParserMock.On("Parse", mock.Anything).Return(logparser.Log{RequestPath: "/turbo"}, nil)
+	logParserMock.On("Parse", mock.Anything).Return(logparser.NewLog("a", "b", "c", "/turbo", int64(200), 1), nil)
 	countryReportMock.On("ShouldExclude", mock.Anything).Return(true)
 
 	appTest.linesCh <- "fakelog"

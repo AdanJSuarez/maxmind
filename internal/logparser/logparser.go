@@ -6,22 +6,11 @@ import (
 	"strconv"
 )
 
-// LogExample: 183.60.212.148 - - [26/Aug/2014:06:26:39 -0600] "GET /entry/15205 HTTP/1.1" 200 4865 "-" "Mozilla/5.0 (compatible; EasouSpider; +http://www.easou.com/search/spider.html)"
-
 const (
 	minimumMatchesLength = 10
 	integerBase          = 10
 	logsFormat           = `$ip $_ $_ \[$time_stamp\] \"$request_method $request_path $protocol\" $status_code $size \"$_\" \"$_\"`
 )
-
-type Log struct {
-	IP            string
-	TS            string
-	RequestMethod string
-	RequestPath   string
-	StatusCode    int64
-	Size          int64
-}
 
 type LogParser struct {
 	regex *regexp.Regexp
@@ -49,14 +38,16 @@ func (lp *LogParser) Parse(line string) (Log, error) {
 	if !lp.hasAllNeededMatches(matches) {
 		return Log{}, fmt.Errorf("does not have the matches")
 	}
-	log := Log{
-		IP:            matches[1],
-		TS:            matches[4],
-		RequestMethod: matches[5],
-		RequestPath:   matches[6],
-		StatusCode:    lp.parseStringToInt64(matches[8]),
-		Size:          lp.parseStringToInt64(matches[9]),
-	}
+
+	log := NewLog(
+		matches[1],
+		matches[4],
+		matches[5],
+		matches[6],
+		lp.parseStringToInt64(matches[8]),
+		lp.parseStringToInt64(matches[9]),
+	)
+
 	return log, nil
 }
 
@@ -65,6 +56,7 @@ func (lp *LogParser) parseStringToInt64(s string) int64 {
 	if err != nil {
 		fmt.Printf("error parsing string: %s. An empty value is assigned: %v\n", s, err)
 	}
+
 	return result
 }
 
