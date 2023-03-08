@@ -47,7 +47,7 @@ func New() (*LogParser, error) {
 func (lp *LogParser) Parse(line string) (Log, error) {
 	matches := lp.regex.FindStringSubmatch(line)
 	if !lp.hasAllNeededMatches(matches) {
-		return Log{}, fmt.Errorf("does not have the matches: %s", line)
+		return Log{}, fmt.Errorf("does not have the matches")
 	}
 	log := Log{
 		IP:            matches[1],
