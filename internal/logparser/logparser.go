@@ -2,7 +2,6 @@ package logparser
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strconv"
 )
@@ -11,6 +10,7 @@ import (
 
 const (
 	minimumMatchesLength = 10
+	integerBase          = 10
 	logsFormat           = `$ip $_ $_ \[$time_stamp\] \"$request_method $request_path $protocol\" $status_code $size \"$_\" \"$_\"`
 )
 
@@ -27,6 +27,7 @@ type LogParser struct {
 	regex *regexp.Regexp
 }
 
+// New returns a initialized instance of LogParser. An error otherwise.
 func New() (*LogParser, error) {
 	regexFormat := regexp.MustCompile(`\$([\w_]*)`).ReplaceAllString(logsFormat, `(?P<$1>.*)`)
 	regex, err := regexp.Compile(regexFormat)
@@ -41,6 +42,8 @@ func New() (*LogParser, error) {
 	return logParser, nil
 }
 
+// Parse reads the line and extract the Log from it. It returns
+// an error otherwise.
 func (lp *LogParser) Parse(line string) (Log, error) {
 	matches := lp.regex.FindStringSubmatch(line)
 	if !lp.hasAllNeededMatches(matches) {
@@ -58,9 +61,9 @@ func (lp *LogParser) Parse(line string) (Log, error) {
 }
 
 func (lp *LogParser) parseStringToInt64(s string) int64 {
-	result, err := strconv.ParseInt(s, 10, 0)
+	result, err := strconv.ParseInt(s, integerBase, 0)
 	if err != nil {
-		log.Printf("error parsing string: %s. An empty value is assigned: %v\n", s, err)
+		fmt.Printf("error parsing string: %s. An empty value is assigned: %v\n", s, err)
 	}
 	return result
 }

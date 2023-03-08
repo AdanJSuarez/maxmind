@@ -54,7 +54,7 @@ func (ts *TSCountries) TestTopAreasAtLestOneVisitor() {
 	nodeMock.On("SortedChildren").Return([]node.Node{mockChild})
 
 	info := countriesTest.TopAreas("Countries,", "", 10)
-	ts.Equal([]Info{{Name: "Tenerife", Visit: 1, TopPage: "/"}}, info)
+	ts.Equal([]Info{{name: "Tenerife", visit: 1, topPage: "/"}}, info)
 }
 
 func (ts *TSCountries) TestTopAreasAtTwoVisitors() {
@@ -66,7 +66,7 @@ func (ts *TSCountries) TestTopAreasAtTwoVisitors() {
 
 	info := countriesTest.TopAreas("Countries,", "", 10)
 	expected := []Info{
-		{Name: "Tenerife", Visit: 2, TopPage: "/"},
+		{name: "Tenerife", visit: 2, topPage: "/"},
 	}
 	ts.Equal(expected, info)
 }
@@ -89,8 +89,8 @@ func (ts *TSCountries) TestTopAreasSelectNoMoreThanTopNumber() {
 
 	info := countriesTest.TopAreas("Countries", "", 2)
 	expected := []Info{
-		{Name: "Tenerife", Visit: 2, TopPage: "/"},
-		{Name: "Tenerife", Visit: 2, TopPage: "/"},
+		{name: "Tenerife", visit: 2, topPage: "/"},
+		{name: "Tenerife", visit: 2, topPage: "/"},
 	}
 	ts.Equal(expected, info)
 }

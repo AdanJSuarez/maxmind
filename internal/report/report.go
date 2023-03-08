@@ -58,15 +58,15 @@ func (r *Report) printReport() {
 func (r *Report) printCountries() {
 	fmt.Println("==> Countries:")
 	countries := r.data.TopAreas(r.data.Name(), excludedPage, top)
-	for idx, val := range countries {
-		fmt.Printf("%d : %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, val.Name, val.Visit, val.TopPage)
+	for idx, country := range countries {
+		fmt.Printf("%d : %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, country.Name(), country.Visit(), country.TopPage())
 	}
 }
 
 func (r *Report) printUSA() {
 	fmt.Println("==> United States:")
 	us := r.data.TopAreas(unitedStates, excludedPage, top)
-	for idx, val := range us {
-		fmt.Printf("%d: %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, val.Name, val.Visit, val.TopPage)
+	for idx, state := range us {
+		fmt.Printf("%d: %s - Visits: %d - Most visited page: \"%s\"\n", idx+1, state.Name(), state.Visit(), state.TopPage())
 	}
 }

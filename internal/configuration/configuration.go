@@ -19,6 +19,7 @@ type Configuration struct {
 	fileSys afero.Fs
 }
 
+// New returns an initialized instance of Configuration.
 func New() Configuration {
 	config := Configuration{}
 	config.fileSys = afero.NewOsFs()
@@ -29,9 +30,12 @@ func New() Configuration {
 	return config
 }
 
+// DBFile db file path.
 func (c *Configuration) DBfile() string {
 	return c.dbFile
 }
+
+// LogFile log file path
 func (c *Configuration) LogFile() string {
 	return c.logFile
 }
@@ -39,11 +43,13 @@ func (c *Configuration) LogFile() string {
 // CheckConfiguration returns an error if any of the files don't exist.
 func (c *Configuration) CheckConfiguration() error {
 	var err error
+
 	_, err1 := c.fileSys.Stat(c.dbFile)
 	if err1 != nil {
 		fmt.Printf("failed on file: %s: %v", c.dbFile, err)
 		err = err1
 	}
+
 	_, err2 := c.fileSys.Stat(c.logFile)
 	if err2 != nil {
 		fmt.Printf("failed on file: %s: %v", c.logFile, err)
@@ -66,10 +72,11 @@ func (c *Configuration) flags() (string, string) {
 		fmt.Println("==> If there is no flags, it would expect to find the default values in the same folder")
 		c.exitPeacefully()
 	}
+
 	return *dbFileFlag, *logFileFlag
 }
 
-// exitPeacefully exit successfully when help flag is invoked.
+// exitPeacefully exit successfully when "help" flag is invoked.
 func (c *Configuration) exitPeacefully() {
 	os.Exit(0)
 }

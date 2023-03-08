@@ -42,13 +42,13 @@ func (gi *GeoInfoRepository) Close() error {
 }
 
 // GetIPInfo returns an instance of geoip2.City with the info of the IP passed if any.
-func (gi *GeoInfoRepository) GetIPInfo(IPString string) GeoInfoModel {
+func (gi *GeoInfoRepository) GetIPInfo(IPString string) GeoInfoData {
 	IP := net.ParseIP(IPString)
 	record, err := gi.db.City(IP)
 	if err != nil || record == nil {
-		return newGeoInfoModel(IPString, nil)
+		return newGeoInfoData(IPString, nil)
 	}
-	return newGeoInfoModel(IPString, record)
+	return newGeoInfoData(IPString, record)
 }
 
 func (gi *GeoInfoRepository) setDBPath(dbPath string) {

@@ -9,7 +9,7 @@ type node struct {
 	children map[string]Node
 }
 
-// New returns a initialized instance of Node
+// New returns a initialized instance of an object that implement Node.
 func New(name string) Node {
 	return &node{
 		name:     name,
@@ -52,9 +52,10 @@ func (n *node) AddToNode(parameters ...string) {
 	}
 }
 
-// SortedData returns a sorted slice of the data.
+// SortedData returns a slice of the data sorted by its counter.
 func (n *node) SortedData(pageExcluded string) []Data {
 	sorted := make([]Data, 0, len(n.data))
+
 	for key, counter := range n.data {
 		if key == pageExcluded {
 			continue
@@ -69,9 +70,10 @@ func (n *node) SortedData(pageExcluded string) []Data {
 	return sorted
 }
 
-// SortedChildrenByCounter returns a sorted slice of Children by its counter
+// SortedChildrenByCounter returns a slice of Children sorted by its counter.
 func (n *node) SortedChildren() []Node {
 	sorted := make([]Node, 0, len(n.children))
+
 	for _, val := range n.children {
 		sorted = append(sorted, val)
 	}
@@ -83,7 +85,7 @@ func (n *node) SortedChildren() []Node {
 	return sorted
 }
 
-// FindNode makes a Breadth-First Search and returns the first node found.
+// FindNode makes a Breadth-First Search and returns the first Node found.
 func (n *node) FindNode(name string) Node {
 	todo := []Node{}
 	visited := []Node{}
@@ -95,6 +97,7 @@ func (n *node) addToData(data string) {
 	n.data[data]++
 }
 
+// addToChild adds element to children.
 func (n *node) addToChild(parameters ...string) {
 	childName := parameters[0]
 	_, found := n.children[childName]
@@ -113,6 +116,7 @@ func (n *node) hasTwoOrMoreElement(parametersLen int) bool {
 	return parametersLen > 1
 }
 
+// bfsForNode is the recursive function for node to traverse the tree (BFS)
 func (n *node) bfsForNode(name string, node Node, todo []Node, visited []Node) Node {
 	if n.contain(node, visited) {
 		return nil
@@ -129,6 +133,7 @@ func (n *node) bfsForNode(name string, node Node, todo []Node, visited []Node) N
 	return n.bfsForTodo(name, todo, visited)
 }
 
+// bfsForTodo is the recursive function for Todo to traverse the tree (BFS)
 func (n *node) bfsForTodo(name string, todo []Node, visited []Node) Node {
 	if len(todo) == 0 {
 		return nil

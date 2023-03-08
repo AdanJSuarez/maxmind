@@ -16,7 +16,7 @@ type logParser interface {
 
 type geoInfo interface {
 	OpenDB() error
-	GetIPInfo(IPString string) geoinfo.GeoInfoModel
+	GetIPInfo(IPString string) geoinfo.GeoInfoData
 	Close() error
 }
 

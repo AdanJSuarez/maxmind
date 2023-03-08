@@ -53,12 +53,12 @@ func (ts *TSLogParser) TestLogLine2() {
 
 func (ts *TSLogParser) TestLogLine3() {
 	actual, err := logParserTest.Parse(logIncompleteTest3)
-	ts.ErrorContains(err, "does not have all the matches")
+	ts.ErrorContains(err, "does not have the matches")
 	ts.Empty(actual)
 }
 func (ts *TSLogParser) TestLogLine4() {
 	actual, err := logParserTest.Parse(logCorruptTest4)
-	ts.ErrorContains(err, "does not have all the matches")
+	ts.ErrorContains(err, "does not have the matches")
 	ts.Empty(actual)
 }
 

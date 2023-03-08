@@ -16,6 +16,7 @@ type LogReader struct {
 	filePath string
 }
 
+// New returns a initialized instance of LogReader.
 func New(wg *sync.WaitGroup, filePath string, linesCh chan string) *LogReader {
 	return &LogReader{
 		wg:       wg,
@@ -25,6 +26,7 @@ func New(wg *sync.WaitGroup, filePath string, linesCh chan string) *LogReader {
 	}
 }
 
+// Open opens the log file. It returns an error otherwise.
 func (lr *LogReader) Open() error {
 	file, err := lr.fileSys.Open(lr.filePath)
 	if err != nil {
@@ -35,6 +37,7 @@ func (lr *LogReader) Open() error {
 	return nil
 }
 
+// Close closes the log file. It returns an error otherwise.
 func (lr *LogReader) Close() error {
 	if lr.file != nil {
 		return lr.file.Close()
@@ -43,7 +46,7 @@ func (lr *LogReader) Close() error {
 }
 
 /*
-ReadLinesFromFile returns nil and sends the lines read through the channel.
+ReadLinesFromFile sends log lines read through the channel.
 It close the channel to sync with the receiver indicating the end of the file.
 */
 func (lr *LogReader) ReadLinesFromFile() {

@@ -8,12 +8,6 @@ const (
 	minVisitors = 1
 )
 
-type Info struct {
-	Name    string
-	Visit   int64
-	TopPage string
-}
-
 type countries struct {
 	countries node.Node
 }
@@ -70,11 +64,8 @@ func (c *countries) notEnoughVisitors(visitors int64) bool {
 }
 
 func (c *countries) newInfo(area node.Node, pageExcluded string, visits int64) Info {
-	return Info{
-		Name:    area.Name(),
-		Visit:   visits,
-		TopPage: c.topPage(area, pageExcluded),
-	}
+	return NewInfo(area.Name(), c.topPage(area, pageExcluded), visits)
+
 }
 
 func (c *countries) topPage(area node.Node, pageExcluded string) string {

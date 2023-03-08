@@ -119,7 +119,7 @@ func (a *App) populateData() {
 		if a.report.ShouldExclude(lineLog.RequestPath) {
 			continue
 		}
-		record := a.geoInfo.GetIPInfo(lineLog.IP)
-		a.report.AddData(record.CountryName, a.report.Subdivision(record.Subdivisions), lineLog.RequestPath)
+		geoInfoData := a.geoInfo.GetIPInfo(lineLog.IP)
+		a.report.AddData(geoInfoData.CountryName(), a.report.Subdivision(geoInfoData.Subdivisions()), lineLog.RequestPath)
 	}
 }
