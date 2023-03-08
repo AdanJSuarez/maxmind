@@ -26,12 +26,6 @@ testmock:
 	make mock
 	make test
 
-.PHONY: cover
-cover:
-	@echo "==> Visual coverage for $(FOLDER)"
-	go test $(FOLDER) -coverprofile=coverage/lastCoverage.out
-	go tool cover -html=coverage/lastCoverage.out
-
 .PHONY: build
 build:
 	@echo "==> Build: Generate binary on /bin folder <=="
@@ -40,5 +34,6 @@ build:
 .PHONY: cover
 cover:
 	@echo "==> Visual coverage for $(FOLDER)"
+	mkdir -p .coverage
 	go test $(FOLDER) -coverprofile=.coverage/lastCoverage.out
 	go tool cover -html=.coverage/lastCoverage.out
