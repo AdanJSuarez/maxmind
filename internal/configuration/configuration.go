@@ -52,13 +52,13 @@ func (c *Configuration) CheckConfiguration() error {
 
 	_, err1 := c.fileSys.Stat(c.dbFile)
 	if err1 != nil {
-		fmt.Printf("failed on file: %s: %v", c.dbFile, err)
+		fmt.Printf("failed on file: %s: %v\n", c.dbFile, err1)
 		err = err1
 	}
 
 	_, err2 := c.fileSys.Stat(c.logFile)
 	if err2 != nil {
-		fmt.Printf("failed on file: %s: %v", c.logFile, err)
+		fmt.Printf("failed on file: %s: %v\n", c.logFile, err2)
 		err = err2
 	}
 	return err
