@@ -14,6 +14,8 @@ func NewInfo(name, topPage string, visit int64) Info {
 	}
 }
 
+// Getters
+
 func (i Info) Name() string {
 	return i.name
 }
