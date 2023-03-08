@@ -46,6 +46,10 @@ func (c *countries) TopAreas(name, pageExcluded string, topNumber int) []Info {
 // minimum visits and then create a slice of info with the children Info up to a topNumber.
 func (c *countries) topAreas(areas node.Node, pageExcluded string, topNumber int) []Info {
 	var result []Info
+
+	if areas == nil {
+		return result
+	}
 	sortedChildren := areas.SortedChildren()
 	for _, child := range sortedChildren {
 		if c.notEnoughVisitors(child.Counter()) {

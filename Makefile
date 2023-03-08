@@ -35,7 +35,7 @@ cover:
 .PHONY: build
 build:
 	@echo "==> Build: Generate binary on /bin folder <=="
-	go build -o ./bin/maxmind ./cmd/maxmind.go
+	go build -o ./bin/maxmind -ldflags "-s -w" ./cmd/maxmind.go
 
 .PHONY: cover
 cover:

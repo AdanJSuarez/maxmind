@@ -87,12 +87,17 @@ func (ts *TSCountries) TestTopAreasSelectNoMoreThanTopNumber() {
 	nodeMock.On("FindNode", mock.Anything).Return(nodeMock)
 	nodeMock.On("SortedChildren").Return([]node.Node{mockChild, mockChild, mockChild})
 
-	info := countriesTest.TopAreas("Countries,", "", 2)
+	info := countriesTest.TopAreas("Countries", "", 2)
 	expected := []Info{
 		{Name: "Tenerife", Visit: 2, TopPage: "/"},
 		{Name: "Tenerife", Visit: 2, TopPage: "/"},
 	}
 	ts.Equal(expected, info)
+}
+
+func (ts *TSCountries) TestTopAreasNilNode() {
+	info := countriesTest.topAreas(nil, "/", 2)
+	ts.Nil(info)
 }
 
 func (ts *TSCountries) TestTopPage() {

@@ -112,7 +112,7 @@ func (a *App) populateData() {
 	for line := range a.linesCh {
 		lineLog, err := a.logParser.Parse(line)
 		if err != nil {
-			fmt.Printf("log line error: %s: %v\n", line, err)
+			fmt.Printf("==> log line error: %s: %v\n", line, err)
 			continue
 		}
 
