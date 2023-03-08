@@ -10,6 +10,12 @@ const (
 	minimumMatchesLength = 10
 	integerBase          = 10
 	logsFormat           = `$ip $_ $_ \[$time_stamp\] \"$request_method $request_path $protocol\" $status_code $size \"$_\" \"$_\"`
+	ipIdx                = 1
+	timeStampIdx         = 4
+	requestMethodIdx     = 5
+	requestPathIdx       = 6
+	statusCodeIdx        = 8
+	sizeIdx              = 9
 )
 
 type LogParser struct {
@@ -40,12 +46,12 @@ func (lp *LogParser) Parse(line string) (Log, error) {
 	}
 
 	log := NewLog(
-		matches[1],
-		matches[4],
-		matches[5],
-		matches[6],
-		lp.parseStringToInt64(matches[8]),
-		lp.parseStringToInt64(matches[9]),
+		matches[ipIdx],
+		matches[timeStampIdx],
+		matches[requestMethodIdx],
+		matches[requestPathIdx],
+		lp.parseStringToInt64(matches[statusCodeIdx]),
+		lp.parseStringToInt64(matches[sizeIdx]),
 	)
 
 	return log, nil
