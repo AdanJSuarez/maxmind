@@ -29,7 +29,7 @@ If any record in the log file is corrupted or malformed, it will report a `log l
 
 ## Unit Test
 
-It requires (Mockery)[https://vektra.github.io/mockery/installation/] to generate the mocks, needed for the unit tests to run. There are different ways to generate the mocks explained in the Mockery documentation.
+It requires [Mockery](https://vektra.github.io/mockery/installation/) to generate the mocks, needed for the unit tests to run. There are different ways to generate the mocks explained in the Mockery documentation.
 
 - If you install Mockery with `go install github.com/vektra/mockery/v2@v2.20.0` after the installation you just need to either `go generate ./...` or `make mock`
 
