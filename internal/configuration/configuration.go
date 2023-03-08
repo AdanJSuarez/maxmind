@@ -14,8 +14,8 @@ const (
 )
 
 type Configuration struct {
-	DBfile  string
-	LogFile string
+	dbFile  string
+	logFile string
 	fileSys afero.Fs
 }
 
@@ -23,23 +23,30 @@ func New() Configuration {
 	config := Configuration{}
 	config.fileSys = afero.NewOsFs()
 	dbFileFlag, logFileFlag := config.flags()
-	config.DBfile = dbFileFlag
-	config.LogFile = logFileFlag
+	config.dbFile = dbFileFlag
+	config.logFile = logFileFlag
 
 	return config
+}
+
+func (c *Configuration) DBfile() string {
+	return c.dbFile
+}
+func (c *Configuration) LogFile() string {
+	return c.logFile
 }
 
 // CheckConfiguration returns an error if any of the files don't exist.
 func (c *Configuration) CheckConfiguration() error {
 	var err error
-	_, err1 := c.fileSys.Stat(c.DBfile)
+	_, err1 := c.fileSys.Stat(c.dbFile)
 	if err1 != nil {
-		fmt.Printf("failed on file: %s: %v", c.DBfile, err)
+		fmt.Printf("failed on file: %s: %v", c.dbFile, err)
 		err = err1
 	}
-	_, err2 := c.fileSys.Stat(c.LogFile)
+	_, err2 := c.fileSys.Stat(c.logFile)
 	if err2 != nil {
-		fmt.Printf("failed on file: %s: %v", c.LogFile, err)
+		fmt.Printf("failed on file: %s: %v", c.logFile, err)
 		err = err2
 	}
 	return err

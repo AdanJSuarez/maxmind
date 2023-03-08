@@ -51,7 +51,7 @@ func (ts *TSCountries) TestTopAreasAtLestOneVisitor() {
 	mockChild.On("Name").Return("Tenerife")
 	mockChild.On("SortedData", mock.Anything).Return([]node.Data{node.NewData("/", 1)})
 	nodeMock.On("FindNode", mock.Anything).Return(nodeMock)
-	nodeMock.On("SortedChildrenByCounter").Return([]node.Node{mockChild})
+	nodeMock.On("SortedChildren").Return([]node.Node{mockChild})
 
 	info := countriesTest.TopAreas("Countries,", "", 10)
 	ts.Equal([]Info{{Name: "Tenerife", Visit: 1, TopPage: "/"}}, info)
@@ -62,7 +62,7 @@ func (ts *TSCountries) TestTopAreasAtTwoVisitors() {
 	mockChild.On("Name").Return("Tenerife")
 	mockChild.On("SortedData", mock.Anything).Return([]node.Data{node.NewData("/", 2)})
 	nodeMock.On("FindNode", mock.Anything).Return(nodeMock)
-	nodeMock.On("SortedChildrenByCounter").Return([]node.Node{mockChild})
+	nodeMock.On("SortedChildren").Return([]node.Node{mockChild})
 
 	info := countriesTest.TopAreas("Countries,", "", 10)
 	expected := []Info{
@@ -74,7 +74,7 @@ func (ts *TSCountries) TestTopAreasAtTwoVisitors() {
 func (ts *TSCountries) TestTopAreasNoVisitor() {
 	mockChild.On("Counter").Return(int64(0))
 	nodeMock.On("FindNode", mock.Anything).Return(nodeMock)
-	nodeMock.On("SortedChildrenByCounter").Return([]node.Node{mockChild})
+	nodeMock.On("SortedChildren").Return([]node.Node{mockChild})
 
 	info := countriesTest.TopAreas("Countries,", "", 10)
 	ts.Empty(info)
@@ -85,7 +85,7 @@ func (ts *TSCountries) TestTopAreasSelectNoMoreThanTopNumber() {
 	mockChild.On("Name").Return("Tenerife")
 	mockChild.On("SortedData", mock.Anything).Return([]node.Data{node.NewData("/", 2)})
 	nodeMock.On("FindNode", mock.Anything).Return(nodeMock)
-	nodeMock.On("SortedChildrenByCounter").Return([]node.Node{mockChild, mockChild, mockChild})
+	nodeMock.On("SortedChildren").Return([]node.Node{mockChild, mockChild, mockChild})
 
 	info := countriesTest.TopAreas("Countries,", "", 2)
 	expected := []Info{

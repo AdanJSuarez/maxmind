@@ -7,6 +7,8 @@ import (
 
 //go:generate mockery --inpackage --name=logParser
 //go:generate mockery --inpackage --name=geoInfo
+//go:generate mockery --inpackage --name=logReader
+//go:generate mockery --inpackage --name=countryReport
 
 type logParser interface {
 	Parse(line string) (logparser.Log, error)
@@ -20,6 +22,7 @@ type geoInfo interface {
 
 type logReader interface {
 	Close() error
+	Open() error
 	ReadLinesFromFile()
 }
 

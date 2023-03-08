@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/oschwald/geoip2-golang"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 )
@@ -51,9 +52,20 @@ func (ts *TSGeoInfoRepository) TestGetIPInfoError() {
 	ts.Equal(unknown, record.CountryName)
 	ts.Equal(unknown, record.Subdivisions[0])
 }
+func (ts *TSGeoInfoRepository) TestGetIPInfo() {
+	geoIPDBReaderMock.On("City", mock.Anything).Return(&geoip2.City{}, nil)
+
+	record := geoInfoRepoTest.GetIPInfo("122.122.12.24")
+	ts.Equal("122.122.12.24", record.IP)
+}
 
 func (ts *TSGeoInfoRepository) TestSetDBPath() {
 	geoInfoRepoTest.setDBPath("otherFile.db")
 
 	ts.Equal("otherFile.db", geoInfoRepoTest.dbPath)
+}
+
+func (ts *TSGeoInfoRepository) TestOpenDB() {
+	err := geoInfoRepoTest.OpenDB()
+	ts.ErrorContains(err, "error on opening the db")
 }
