@@ -6,6 +6,7 @@ type Data struct {
 	counter int64
 }
 
+// NewData returns an initialized instance of Data.
 func NewData(name string, counter int64) Data {
 	return Data{
 		name:    name,

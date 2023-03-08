@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	geoInfoModelTest GeoInfoModel
+	geoInfoModelTest GeoInfoData
 	recordTest1      = geoip2.City{
 		Country: struct {
 			GeoNameID         uint              `maxminddb:"geoname_id"`
@@ -110,39 +110,39 @@ func TestRunTSGeoInfoModel(t *testing.T) {
 }
 
 func (ts *TSGeoInfoModel) BeforeTest(_, _ string) {
-	geoInfoModelTest = newGeoInfoModel("122.122.12.22", nil)
+	geoInfoModelTest = newGeoInfoData("122.122.12.22", nil)
 }
 
 func (ts *TSGeoInfoModel) TestGeoInfoModelInitializedNil() {
-	ts.Equal("122.122.12.22", geoInfoModelTest.IP)
-	ts.Equal(unknown, geoInfoModelTest.CountryName)
-	ts.Equal(unknown, geoInfoModelTest.Subdivisions[0])
+	ts.Equal("122.122.12.22", geoInfoModelTest.IP())
+	ts.Equal(unknown, geoInfoModelTest.CountryName())
+	ts.Equal(unknown, geoInfoModelTest.Subdivisions()[0])
 }
 
 func (ts *TSGeoInfoModel) TestGeoInfoModelCompleteRecord() {
-	geoInfoModelTest = newGeoInfoModel("122.122.12.23", &recordTest1)
-	ts.Equal("122.122.12.23", geoInfoModelTest.IP)
-	ts.Equal("Spain", geoInfoModelTest.CountryName)
-	ts.Equal("Tenerife", geoInfoModelTest.Subdivisions[0])
+	geoInfoModelTest = newGeoInfoData("122.122.12.23", &recordTest1)
+	ts.Equal("122.122.12.23", geoInfoModelTest.IP())
+	ts.Equal("Spain", geoInfoModelTest.CountryName())
+	ts.Equal("Tenerife", geoInfoModelTest.Subdivisions()[0])
 }
 
 func (ts *TSGeoInfoModel) TestGeoInfoModelNoCountryName() {
-	geoInfoModelTest = newGeoInfoModel("122.122.12.24", &recordTest2)
-	ts.Equal("122.122.12.24", geoInfoModelTest.IP)
-	ts.Equal(unknown, geoInfoModelTest.CountryName)
-	ts.Equal("Tenerife", geoInfoModelTest.Subdivisions[0])
+	geoInfoModelTest = newGeoInfoData("122.122.12.24", &recordTest2)
+	ts.Equal("122.122.12.24", geoInfoModelTest.IP())
+	ts.Equal(unknown, geoInfoModelTest.CountryName())
+	ts.Equal("Tenerife", geoInfoModelTest.Subdivisions()[0])
 }
 
 func (ts *TSGeoInfoModel) TestGeoInfoModelNoSubdivisions() {
-	geoInfoModelTest = newGeoInfoModel("122.122.12.24", &recordTest3)
-	ts.Equal("122.122.12.24", geoInfoModelTest.IP)
-	ts.Equal("Spain", geoInfoModelTest.CountryName)
-	ts.Equal(unknown, geoInfoModelTest.Subdivisions[0])
+	geoInfoModelTest = newGeoInfoData("122.122.12.24", &recordTest3)
+	ts.Equal("122.122.12.24", geoInfoModelTest.IP())
+	ts.Equal("Spain", geoInfoModelTest.CountryName())
+	ts.Equal(unknown, geoInfoModelTest.Subdivisions()[0])
 }
 
 func (ts *TSGeoInfoModel) TestGeoInfoModelNilMaps() {
-	geoInfoModelTest = newGeoInfoModel("122.122.12.25", &recordTest4)
-	ts.Equal("122.122.12.25", geoInfoModelTest.IP)
-	ts.Equal(unknown, geoInfoModelTest.CountryName)
-	ts.Equal(unknown, geoInfoModelTest.Subdivisions[0])
+	geoInfoModelTest = newGeoInfoData("122.122.12.25", &recordTest4)
+	ts.Equal("122.122.12.25", geoInfoModelTest.IP())
+	ts.Equal(unknown, geoInfoModelTest.CountryName())
+	ts.Equal(unknown, geoInfoModelTest.Subdivisions()[0])
 }

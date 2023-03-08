@@ -72,7 +72,7 @@ func (ts *TSApp) TestInitializationOnError() {
 func (ts *TSApp) TestStart() {
 	logReaderMock.On("ReadLinesFromFile").Return()
 	logParserMock.On("Parse", mock.Anything).Return(logparser.Log{RequestPath: "/turbo"}, nil)
-	geoInfoMock.On("GetIPInfo", mock.Anything).Return(geoinfo.GeoInfoModel{})
+	geoInfoMock.On("GetIPInfo", mock.Anything).Return(geoinfo.GeoInfoData{})
 	countryReportMock.On("ShouldExclude", mock.Anything).Return(false)
 	countryReportMock.On("Subdivision", mock.Anything).Return("fake")
 	countryReportMock.On("AddData", mock.Anything, mock.Anything, mock.Anything).Return()

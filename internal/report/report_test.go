@@ -259,8 +259,10 @@ func (ts *TSReport) TestAddData() {
 
 func (ts *TSReport) TestPrintReport() {
 	infos := []countries.Info{
-		{Name: "Spain", Visit: 3, TopPage: "/turbo"},
-		{Name: "Canada", Visit: 2, TopPage: "/rambo"},
+		countries.NewInfo("Spain", "/turbo", 3),
+		countries.NewInfo("Canada", "/rambo", 2),
+		// {Name: "Spain", Visit: 3, TopPage: "/turbo"},
+		// {Name: "Canada", Visit: 2, TopPage: "/rambo"},
 	}
 	dataMock.On("TopAreas", mock.Anything, mock.Anything, mock.Anything).Return(infos)
 	dataMock.On("Name").Return("Countries")
