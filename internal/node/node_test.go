@@ -268,3 +268,46 @@ func (ts *TSNode) TestFindNode3() {
 	ts.Nil(child)
 	ts.False(found)
 }
+
+func (ts *TSNode) TestFindNode4() {
+	nodeTest.AddToNode("Tenerife", "La Matanza", "/turbo")
+	nodeTest.AddToNode("Tenerife", "Santa Ursula", "/")
+	nodeTest.AddToNode("Tenerife", "La Victoria", "/")
+
+	nodeTest.AddToNode("Canada", "Ontario", "/turbo1")
+	nodeTest.AddToNode("Canada", "Alberta", "/t")
+	nodeTest.AddToNode("Canada", "Yukon", "/x")
+
+	actual := nodeTest.FindNode("Montana")
+	ts.Nil(actual)
+}
+
+func (ts *TSNode) TestNodeVisitedAlready() {
+	node := &node{name: "La Matanza", counter: 1}
+	visited := []Node{node}
+	todo := []Node{}
+
+	actual := node.bfsForNode("La Matanza", node, todo, visited)
+	ts.Nil(actual)
+}
+
+func (ts *TSNode) TestContain() {
+	node1 := &node{name: "La Matanza", counter: 1}
+	node2 := &node{name: "Santa Ursula", counter: 2}
+	node3 := &node{name: "La Victoria", counter: 3}
+
+	nodes := []Node{node1, node2, node3}
+
+	actual := node1.contain(node3, nodes)
+	ts.True(actual)
+}
+func (ts *TSNode) TestContain2() {
+	node1 := &node{name: "La Matanza", counter: 1}
+	node2 := &node{name: "Santa Ursula", counter: 2}
+	node3 := &node{name: "La Victoria", counter: 3}
+
+	nodes := []Node{node1, node2}
+
+	actual := node1.contain(node3, nodes)
+	ts.False(actual)
+}

@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	channelSize = 1000
+	channelSize     = 1000
+	numOfGoroutines = 2
 )
 
 type App struct {
@@ -31,6 +32,8 @@ func New(wg *sync.WaitGroup, config configuration.Configuration) (*App, error) {
 		config:  config,
 		linesCh: make(chan string, channelSize),
 	}
+	app.logReader = logreader.New(app.wg, app.config.LogFile(), app.linesCh)
+	app.geoInfo = geoinfo.New(app.config.DBfile())
 
 	if err := app.initializeApp(wg); err != nil {
 		return nil, err
@@ -42,10 +45,11 @@ func New(wg *sync.WaitGroup, config configuration.Configuration) (*App, error) {
 // Start starts the application. It read lines from the file and populate data for
 // the report
 func (a *App) Start() {
-	a.wg.Add(2)
+	a.wg.Add(numOfGoroutines)
 	go a.logReader.ReadLinesFromFile()
 	go a.populateData()
 	a.wg.Wait()
+
 	a.report.Generate()
 }
 
@@ -61,30 +65,19 @@ func (a *App) Close() {
 
 // initializeApp initializes all the dependencies. It returns an error otherwise.
 func (a *App) initializeApp(wg *sync.WaitGroup) error {
-
 	if err := a.setLogParser(); err != nil {
 		return err
 	}
 
-	if err := a.setLogReader(); err != nil {
+	if err := a.openLogReader(); err != nil {
 		return err
 	}
 
-	if err := a.setGeoInfo(); err != nil {
+	if err := a.openGeoInfo(); err != nil {
 		return err
 	}
 
 	a.report = report.New()
-	return nil
-}
-
-func (a *App) setGeoInfo() error {
-	a.geoInfo = geoinfo.New(a.config.DBfile)
-	if err := a.geoInfo.OpenDB(); err != nil {
-		fmt.Printf("error open db: %v\n", err)
-		return err
-	}
-
 	return nil
 }
 
@@ -98,18 +91,24 @@ func (a *App) setLogParser() error {
 	return nil
 }
 
-func (a *App) setLogReader() error {
-	logReader := logreader.New(a.wg, a.config.LogFile, a.linesCh)
-	if err := logReader.Open(); err != nil {
+func (a *App) openLogReader() error {
+	if err := a.logReader.Open(); err != nil {
 		return err
 	}
+	return nil
+}
 
-	a.logReader = logReader
+func (a *App) openGeoInfo() error {
+	if err := a.geoInfo.OpenDB(); err != nil {
+		fmt.Printf("error open db: %v\n", err)
+		return err
+	}
 	return nil
 }
 
 func (a *App) populateData() {
 	defer a.wg.Done()
+
 	for line := range a.linesCh {
 		lineLog, err := a.logParser.Parse(line)
 		if err != nil {
