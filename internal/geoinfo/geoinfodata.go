@@ -15,6 +15,7 @@ type GeoInfoData struct {
 	subdivisions []string
 }
 
+// newGeoInfoData returns a initialized instance of GeoInfoData.
 func newGeoInfoData(IPString string, record *geoip2.City) GeoInfoData {
 	gim := GeoInfoData{
 		ip:           IPString,

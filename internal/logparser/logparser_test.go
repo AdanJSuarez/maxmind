@@ -32,23 +32,23 @@ func (ts *TSLogParser) BeforeTest(_, _ string) {
 func (ts *TSLogParser) TestLogLine1() {
 	actual, err := logParserTest.Parse(logTest1)
 	ts.NoError(err)
-	ts.Equal("183.60.212.148", actual.IP)
-	ts.Equal("26/Aug/2014:06:26:39 -0600", actual.TS)
-	ts.Equal("GET", actual.RequestMethod)
-	ts.Equal("/entry/15205", actual.RequestPath)
-	ts.Equal(int64(200), actual.StatusCode)
-	ts.Equal(int64(4865), actual.Size)
+	ts.Equal("183.60.212.148", actual.IP())
+	ts.Equal("26/Aug/2014:06:26:39 -0600", actual.TS())
+	ts.Equal("GET", actual.RequestMethod())
+	ts.Equal("/entry/15205", actual.RequestPath())
+	ts.Equal(int64(200), actual.StatusCode())
+	ts.Equal(int64(4865), actual.Size())
 }
 
 func (ts *TSLogParser) TestLogLine2() {
 	actual, err := logParserTest.Parse(logTest2)
 	ts.NoError(err)
-	ts.Equal("23.239.8.38", actual.IP)
-	ts.Equal("26/Aug/2014:06:59:31 -0600", actual.TS)
-	ts.Equal("GET", actual.RequestMethod)
-	ts.Equal("/", actual.RequestPath)
-	ts.Equal(int64(200), actual.StatusCode)
-	ts.Equal(int64(10098), actual.Size)
+	ts.Equal("23.239.8.38", actual.IP())
+	ts.Equal("26/Aug/2014:06:59:31 -0600", actual.TS())
+	ts.Equal("GET", actual.RequestMethod())
+	ts.Equal("/", actual.RequestPath())
+	ts.Equal(int64(200), actual.StatusCode())
+	ts.Equal(int64(10098), actual.Size())
 }
 
 func (ts *TSLogParser) TestLogLine3() {
