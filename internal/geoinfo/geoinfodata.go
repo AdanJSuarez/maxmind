@@ -28,6 +28,8 @@ func newGeoInfoData(IPString string, record *geoip2.City) GeoInfoData {
 	return gim.geoInfoData(IPString, record)
 }
 
+// Getters
+
 func (gi *GeoInfoData) IP() string {
 	return gi.ip
 }

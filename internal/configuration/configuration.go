@@ -41,7 +41,7 @@ func (c *Configuration) DBfile() string {
 	return c.dbFile
 }
 
-// LogFile log file path
+// LogFile log file path.
 func (c *Configuration) LogFile() string {
 	return c.logFile
 }

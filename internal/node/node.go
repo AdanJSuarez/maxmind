@@ -18,6 +18,8 @@ func New(name string) Node {
 	}
 }
 
+// Getters
+
 func (n *node) Name() string {
 	return n.name
 }

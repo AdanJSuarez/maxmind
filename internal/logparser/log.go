@@ -9,6 +9,7 @@ type Log struct {
 	size          int64
 }
 
+// NewLog returns an initialized instance of Log.
 func NewLog(ip, ts, requestMethod, requestPath string, statusCode, size int64) Log {
 	return Log{
 		ip:            ip,
@@ -19,6 +20,8 @@ func NewLog(ip, ts, requestMethod, requestPath string, statusCode, size int64) L
 		size:          size,
 	}
 }
+
+// Getters
 
 func (l Log) IP() string {
 	return l.ip

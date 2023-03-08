@@ -14,6 +14,8 @@ func NewData(name string, counter int64) Data {
 	}
 }
 
+// Getters
+
 func (d *Data) Name() string {
 	return d.name
 }
