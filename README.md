@@ -17,7 +17,7 @@ make build
 
 Otherwise: `go build -o ./bin/maxmind -ldflags "-s -w" ./cmd/maxmind.go`
 
-To run the executable called `./bin/maxmind`. You can run `maxmind -help` which explains the flags.
+To run the executable move to `bin/` folder and called `./maxmind`. You can run `./maxmind -help` which explains the flags.
 If you don't pass any flag, it assumes the files are located in the same folder with the default names as explained in `help`:
 
     - `GeoLite2-City.mmdb` for db
