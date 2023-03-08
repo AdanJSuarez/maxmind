@@ -8,7 +8,7 @@ The requirements for this exercise are posted in a [MaxMind public repo](https:/
 
 ## Considerations
 
-The project require **Go 1.18 or above**
+The project require **Go 1.18 or above**. The project comes with `vendor` including all the dependencies to compile it.
 
 To compile the project, if you have installed `make`
 ```make
@@ -17,7 +17,7 @@ make build
 
 Otherwise: `go build -o ./bin/maxmind -ldflags "-s -w" ./cmd/maxmind.go`
 
-To run the executable called `maxmind` you can run `maxmind -help` which explains the flags.
+To run the executable called `./bin/maxmind` you can run `maxmind -help` which explains the flags.
 If you don't pass any flag, it assumes the files are located in the same folder with the default names as explained in `help`:
 
     - `GeoLite2-City.mmdb` for db

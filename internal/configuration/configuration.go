@@ -11,6 +11,12 @@ import (
 const (
 	dbFileDefault  = "GeoLite2-City.mmdb"
 	logFileDefault = "access.log"
+	dbFileFlag     = "dbfile"
+	logFileFlag    = "logfile"
+	helpFlag       = "help"
+	dbfileMessage  = "dbfile: is the path of the City db"
+	logfileMessage = "logfile: is the path of the log file"
+	helpMessage    = "help: gives information about the flags"
 )
 
 type Configuration struct {
@@ -61,9 +67,9 @@ func (c *Configuration) CheckConfiguration() error {
 // flags reads and parses the flags from the command line, if any.
 // It sets the default values if no flag is passed.
 func (c *Configuration) flags() (string, string) {
-	dbFileFlag := flag.String("dbFile", dbFileDefault, "dbFile: is the path of the City db")
-	logFileFlag := flag.String("logFile", logFileDefault, "logFile: is the path of the log file")
-	helpFlag := flag.Bool("help", false, "help: gives information about the flags")
+	dbFileFlag := flag.String(dbFileFlag, dbFileDefault, dbfileMessage)
+	logFileFlag := flag.String(logFileFlag, logFileDefault, logfileMessage)
+	helpFlag := flag.Bool(helpFlag, false, helpMessage)
 	flag.Parse()
 
 	if *helpFlag {

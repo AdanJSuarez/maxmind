@@ -26,6 +26,7 @@ type App struct {
 	linesCh   chan string
 }
 
+// New returns a initialized instance of App. An error otherwise.
 func New(wg *sync.WaitGroup, config configuration.Configuration) (*App, error) {
 	app := &App{
 		wg:      wg,
