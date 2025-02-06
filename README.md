@@ -2,10 +2,6 @@
 
 MaxMind log parser that reports IP geo-location analysis.
 
-## Homework requirements
-
-The requirements for this exercise are posted in a [MaxMind public repo](https://github.com/maxmind/dev-hire-homework)
-
 ## Considerations
 
 The project require **Go 1.18 or higher**. The project comes with `vendor` including all the dependencies to compile it.
